@@ -1,0 +1,154 @@
+/* Reset basic margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: #fff;
+
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+  
+  .home-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  header {
+    background-color: transparent;
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+  }
+  
+  .logo {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 1px;
+  }
+  
+  .auth-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    margin-left: 25px;
+    transition: color 0.3s ease;
+  }
+  
+  .auth-links a:hover {
+    color: #f2c94c;
+  }
+  
+  main {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    position: relative;
+    height: calc(100vh - 120px);
+  }
+  
+  .section {
+    width: 45%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 50px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .section:hover {
+    transform: translateY(-10px);
+  }
+  
+  h2 {
+    font-size: 36px;
+    font-weight: 600;
+    color: #f2c94c;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    font-size: 18px;
+    color: #ffffff;
+    line-height: 1.5;
+    margin-bottom: 30px;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background-color: #f2c94c;
+    color: #333;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 200px;
+  }
+  
+  button:hover {
+    background-color: #e1b029;
+    transform: translateY(-5px);
+  }
+  
+  footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+  
+  .footer-links p {
+    margin: 0;
+  }
+  
+  @media (max-width: 768px) {
+    main {
+      flex-direction: column;
+    }
+  
+    .section {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  
+    h2 {
+      font-size: 28px;
+    }
+  
+    p {
+      font-size: 16px;
+    }
+  
+    button {
+      font-size: 16px;
+    }
+  }
+  
