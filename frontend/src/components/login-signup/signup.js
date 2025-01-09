@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -40,7 +41,9 @@ function Signup() {
   return (
     <div className="flex h-screen bg-gray-200">
       <div className="w-1/2 bg-blue-500 flex items-center justify-center">
-        <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
+      <Link to="/">
+    <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
+  </Link>
       </div>
       <div className="w-1/2 p-8">
         <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
@@ -221,6 +224,13 @@ function Signup() {
             Sign Up
           </button>
         </form>
+        <div className="mt-4">
+        <p>Already have an account?</p>
+          <Link to="/login" className="text-blue-500">
+            Log in as a mentee or mentor
+          </Link>
+        </div>
+
       </div>
     </div>
   );

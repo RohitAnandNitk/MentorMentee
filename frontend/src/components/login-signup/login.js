@@ -33,7 +33,9 @@ function Login() {
   return (
     <div className="flex h-screen bg-gray-200">
       <div className="w-1/2 bg-blue-500 flex items-center justify-center">
-        <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
+      <Link to="/">
+    <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
+  </Link>
       </div>
       <div className="w-1/2 p-8">
         <h1 className="text-3xl font-bold mb-6">Log In</h1>
