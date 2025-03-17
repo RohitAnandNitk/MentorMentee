@@ -44,6 +44,10 @@ import ChatRoutes from "./Routes/ChatRoutes.js";
 app.use('/chat', ChatRoutes);
 
 
+app.get("/api/chatbase-key",(req, res) => {
+    res.json({ key: process.env.CHATBASE_SECRET_KEY});
+});
+
 // Start the server (Only one listen call)
 const SOCKETIO_PORT = PORT; // Use the same port for Socket.IO and Express
 server.listen(SOCKETIO_PORT, () => {
