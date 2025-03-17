@@ -1,37 +1,30 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./Login.css"; // Import CSS file
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("mentee"); // New state for userType
+  const [userType, setUserType] = useState("mentee");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Toggle the dialog
-  const handleOpen = () => setOpen(!open);
-
-  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const path =
-      userType === "mentor"
-        ? "http://localhost:4000/mentor/signin"
-        : "http://localhost:4000/mentee/signin";
-
+    const path = userType === "mentor" 
+      ? "http://localhost:4000/mentor/signin" 
+      : "http://localhost:4000/mentee/signin";
+  
     try {
       const response = await fetch(path, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        handleOpen();
+        localStorage.setItem("isLoggedIn", "true");  // Store login status
         navigate("/chat-page");
       } else {
         setError(data.error);
@@ -40,72 +33,79 @@ const Login = () => {
       setError("Something went wrong. Please try again.");
     }
   };
+  
 
   return (
-    <div className="login-container">
-      <button className="open-dialog-btn" onClick={handleOpen}>Sign In</button>
+    <div className="flex h-screen bg-gray-200">
+      {/* Left Side */}
+      <div className="w-1/2 flex items-center justify-center bg-gray-100 p-6 rounded-lg shadow">
+      <Link to="/">
+          <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
+        </Link>
+      </div>
 
-      {open && (
-        <div className="dialog-overlay">
-          <div className="dialog-box">
-            <h2 className="dialog-title">Sign In</h2>
-            <p className="dialog-subtext">Enter your credentials to sign in.</p>
+      {/* Right Side */}
+      <div className="w-1/2 p-8">
+        <h1 className="text-3xl font-bold mb-6">Sign In</h1>
 
-            <form onSubmit={handleSubmit} className="login-form">
-              <label>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-
-              <label>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-
-              {/* User Type Selection */}
-              <label>User Type</label>
-              <select
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
-                required
-              >
-                <option value="mentee">Mentee</option>
-                <option value="mentor">Mentor</option>
-              </select>
-
-              <div className="remember-me">
-                <input type="checkbox" id="remember" />
-                <label htmlFor="remember">Remember Me</label>
-              </div>
-
-              {error && <p className="error-message">{error}</p>}
-
-              <button type="submit" className="submit-btn">Sign In</button>
-            </form>
-
-            <p className="signup-link">
-              Don't have an account?{" "}
-              <span
-                className="signup-btn"
-                onClick={() => {
-                  handleOpen();
-                  navigate("/signup");
-                }}
-              >
-                Sign up
-              </span>
-            </p>
-
-            <button className="close-dialog-btn" onClick={handleOpen}>Close</button>
-          </div>
+        {/* User Type Selection */}
+        <div className="flex mb-4">
+          <button
+            className={`border p-2 rounded-md mr-2 ${
+              userType === "mentee" ? "bg-slate-600 text-white" : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setUserType("mentee")}
+          >
+            I'm a Mentee
+          </button>
+          <button
+            className={`border p-2 rounded-md ${
+              userType === "mentor" ? "bg-slate-600 text-white" : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setUserType("mentor")}
+          >
+            I'm a Mentor
+          </button>
         </div>
-      )}
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              className="mt-1 p-2 w-full border rounded-md"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              className="mt-1 p-2 w-full border rounded-md"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
+          <button type="submit" className="w-full bg-slate-600 text-white py-2 rounded-md">
+            Sign In
+          </button>
+        </form>
+
+        <p className="mt-4 text-sm">
+          Don't have an account?{" "}
+          <span className="text-blue-500 cursor-pointer" onClick={() => navigate("/signup")}>
+            Sign up
+          </span>
+        </p>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,16 @@
 import React from 'react';
 import PrimarySearchAppBar from '../components/ResponsiveAppBar';
 import { Link } from 'react-router-dom';
+import useChatbase from "./ChatBot";
+
+
+
+
 
 const LandingPage = () => {
+  
+  useChatbase();
+
   const scrollToSearchBar = () => {
     const searchBarSection = document.getElementById('search-bar-section');
     const searchInput = searchBarSection ? searchBarSection.querySelector('input') : null;

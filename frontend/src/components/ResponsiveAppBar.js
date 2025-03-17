@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -14,7 +14,20 @@ import MenuItem from '@mui/material/MenuItem';
 
 const ResponsiveAppBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+
+  // Load login state from localStorage when the component mounts
+  useEffect(() => {
+    const storedLoginState = localStorage.getItem('isLoggedIn');
+    const storedUserName = localStorage.getItem('userName');
+
+    if (storedLoginState === 'true') {
+      setIsLoggedIn(true);
+      setUserName(storedUserName || 'User');
+    }
+  }, []);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -26,7 +39,17 @@ const ResponsiveAppBar = () => {
 
   const handleLogoutClick = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userName');
     handleCloseUserMenu();
+  };
+
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
   };
 
   return (
@@ -43,6 +66,7 @@ const ResponsiveAppBar = () => {
             </Link>
           </Typography>
 
+          {/* Desktop Menu */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
             <Link to="/about" style={{ textDecoration: 'none', color: '#1f2937' }}>
               <Typography variant="button" sx={{ fontWeight: '500' }}>
@@ -54,65 +78,108 @@ const ResponsiveAppBar = () => {
                 Contact
               </Typography>
             </Link>
-          
 
-          {isLoggedIn ? (
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                anchorEl={anchorElUser}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                keepMounted
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">Profile</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">Dashboard</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleLogoutClick}>
-                  <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
-          ) : (
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-              <Link to="/login" style={{ textDecoration: 'none', color: '#1f2937' }}>
-                <Typography variant="button" sx={{ fontWeight: '500' }}>
-                  Login
-                </Typography>
-              </Link>
-              <Link to="/signup" style={{ textDecoration: 'none', color: '#ffffff' }}>
-                <Typography
-                  variant="button"
-                  sx={{
-                    fontWeight: '500',
-                    backgroundColor: '#2F3437',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                  }}
+            {isLoggedIn ? (
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title={userName}>
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" sx={{ width: 25, height: 25 }} />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '50px' }}
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  keepMounted
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
                 >
-                  Sign Up
-                </Typography>
-              </Link>
-            </Box>
-            
-          )}
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">Profile</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">Dashboard</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogoutClick}>
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </Box>
+            ) : (
+              <>
+                <Link to="/login" style={{ textDecoration: 'none', color: '#1f2937' }}>
+                  <Typography variant="button" sx={{ fontWeight: '500' }}>
+                    Login
+                  </Typography>
+                </Link>
+                <Link to="/signup" style={{ textDecoration: 'none', color: '#ffffff' }}>
+                  <Typography
+                    variant="button"
+                    sx={{
+                      fontWeight: '500',
+                      backgroundColor: '#2F3437',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    Sign Up
+                  </Typography>
+                </Link>
+              </>
+            )}
           </Box>
 
           {/* Mobile Menu */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, ml: 2 }}>
-            <IconButton size="large" aria-label="menu" color="inherit">
+          <Box sx={{ display: { xs: 'flex', md: 'none', color: '#000' } }}>
+            <IconButton size="large" aria-label="menu" color="inherit" onClick={handleOpenNavMenu}>
               <MenuIcon />
             </IconButton>
+            <Menu
+              sx={{ mt: '45px' }}
+              anchorEl={anchorElNav}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/about" style={{ textDecoration: 'none', color: '#1f2937' }}>
+                  <Typography textAlign="center">About</Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/contact" style={{ textDecoration: 'none', color: '#1f2937' }}>
+                  <Typography textAlign="center">Contact</Typography>
+                </Link>
+              </MenuItem>
+              {isLoggedIn ? (
+                <>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">Profile</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">Dashboard</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogoutClick}>
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <Link to="/login" style={{ textDecoration: 'none', color: '#1f2937' }}>
+                      <Typography textAlign="center">Login</Typography>
+                    </Link>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <Link to="/signup" style={{ textDecoration: 'none', color: '#1f2937' }}>
+                      <Typography textAlign="center">Sign Up</Typography>
+                    </Link>
+                  </MenuItem>
+                </>
+              )}
+            </Menu>
           </Box>
         </Toolbar>
       </Container>

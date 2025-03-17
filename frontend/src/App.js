@@ -5,6 +5,7 @@ import Signup from "./components/signup";
 import Login from "./components/login";
 import ChatPage from "./pages/ChatPage";
 import "./App.css";
+import MentorProfile from "./components/MentorProfile";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />  {/* Fixed path for Login */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/chat-page" element={<ChatPage />} />
+        <Route path="/profile" element={<MentorProfile/>} />
       </Routes>
     </Router>
   );
