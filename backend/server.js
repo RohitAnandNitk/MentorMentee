@@ -1,55 +1,50 @@
-import express from 'express';
-const app = express();
-import dotenv from 'dotenv'
-dotenv.config();
-import cors from 'cors';
-
-
-// Import socket middleware and http
-import { initializeSocket } from "./Middleware/socketio.js";
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 import http from "http";
+import multer from "multer";
+import bodyParser from "body-parser";
+import db from "./config/db.js";
+import MentorRoute from "./Routes/MentorRoutes.js";
+import MenteeRoute from "./Routes/MenteeRoutes.js";
+import ChatRoutes from "./Routes/ChatRoutes.js";
+import { initializeSocket } from "./Middleware/socketio.js";
+
+dotenv.config();
+const app = express();
 const server = http.createServer(app); // HTTP server
+
 // Initialize Socket.IO
 initializeSocket(server);
 
-
-// let's handle cors ..........
+// ✅ Fix CORS issue (Methods should be an array)
 const corsOption = {
-    origin :"http://localhost:3000",
-    methods : "GET , POST , PUT , DELETE",
-    credentials : true
-}
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
 app.use(cors(corsOption));
 
+// ✅ Fix: Proper Middleware for parsing request bodies
+app.use(express.json()); // Parse JSON data
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form data
 
-const PORT = process.env.PORT || 4000;
-const murl = process.env.MONGODB_URL;
+// ✅ Fix: Use Multer for handling file uploads
+const storage = multer.memoryStorage(); // Store in memory (or use disk storage)
+const upload = multer({ storage: storage });
+app.use(upload.single("image")); // Middleware to handle file uploads
 
-// console.log('MongoDB URL:', murl); // Debug line to check if the variable is loaded
+// ✅ Route Setup
+app.use("/mentor", MentorRoute);
+app.use("/mentee", MenteeRoute);
+app.use("/chat", ChatRoutes);
 
-import db  from './config/db.js';
-
-
-import bodyParser from 'body-parser';
-app.use(bodyParser.json());  // Parse JSON request body
-
-
-import MentorRoute from './Routes/MentorRoutes.js';
-app.use('/mentor' , MentorRoute);
-
-import MenteeRoute from './Routes/MenteeRoutes.js';
-app.use( '/mentee' , MenteeRoute);
-
-import ChatRoutes from "./Routes/ChatRoutes.js";
-app.use('/chat', ChatRoutes);
-
-
-app.get("/api/chatbase-key",(req, res) => {
-    res.json({ key: process.env.CHATBASE_SECRET_KEY});
+app.get("/api/chatbase-key", (req, res) => {
+  res.json({ key: process.env.CHATBASE_SECRET_KEY });
 });
 
-// Start the server (Only one listen call)
-const SOCKETIO_PORT = PORT; // Use the same port for Socket.IO and Express
-server.listen(SOCKETIO_PORT, () => {
-    console.log(`Server running on port ${SOCKETIO_PORT}`);
+// Start the server
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
