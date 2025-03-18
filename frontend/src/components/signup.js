@@ -67,39 +67,59 @@ function Signup() {
       formData.append('password', values.password);
       formData.append('bio', values.bio);
       formData.append('availability', values.availability);
-      
-      skills.forEach((skill) => formData.append('skills', skill));
+    
+      // Ensure skills are appended correctly
+      if (skills.length > 0) {
+        formData.append('skills', JSON.stringify(skills)); // Backend might expect JSON array
+      }
+    
       if (image) {
         formData.append('image', image);
       }
-
+    
+      // Debugging: Log form data properly
+      console.log("FormData before sending:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+    
       await handleSignup(formData);
-    },
+    }
+    
   });
 
   const handleSignup = async (formData) => {
-    const path = userType === 'mentor' ? `${BaseURL}/mentor/signup` : `${BaseURL}/mentee/signup`;
-
     try {
+      const path = userType === 'mentor' 
+        ? `${BaseURL}/mentor/signup` 
+        : `${BaseURL}/mentee/signup`;
+  
+      console.log("User data being sent to backend:");
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+  
       const response = await fetch(path, {
         method: 'POST',
-        body: formData, // Do NOT set 'Content-Type' manually
+        body: formData,
       });
-
+  
       const result = await response.json();
-
-      if (response.status === 200) {
-        console.log('User signed up successfully');
-        localStorage.setItem('authToken', result.token);
-        navigate('/dashboard'); // Redirect after successful signup
-      } else {
-        console.error('Error signing up:', result.error);
+  
+      if (!response.ok) {
+        throw new Error(result.error || `Signup failed with status: ${response.status}`);
       }
+  
+      console.log('User signed up successfully:', result);
+      localStorage.setItem('authToken', result.token);
+  
+      navigate('/dashboard'); // Redirect after successful signup
     } catch (error) {
-      console.error('Signup failed:', error);
+      console.error('Signup failed:', error.message || error);
     }
   };
-
+  
+  
   return (
     <div className="flex h-screen bg-gray-200">
       <div className="w-1/2 bg-gray-100 p-6 rounded-lg shadow flex items-center justify-center">
