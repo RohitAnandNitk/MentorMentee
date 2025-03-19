@@ -4,7 +4,7 @@ import cors from "cors";
 import http from "http";
 import multer from "multer";
 import bodyParser from "body-parser";
-import db from "./config/db.js";
+
 import MentorRoute from "./Routes/MentorRoutes.js";
 import MenteeRoute from "./Routes/MenteeRoutes.js";
 import ChatRoutes from "./Routes/ChatRoutes.js";

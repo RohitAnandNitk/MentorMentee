@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+const BaseURL = config.BASE_URL;
+const socket = io(BaseURL); // Adjust to your backend URL
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,8 +15,8 @@ const Login = () => {
     e.preventDefault();
     const path =
       userType === "mentor"
-        ? "http://localhost:4000/mentor/signin"
-        : "http://localhost:4000/mentee/signin";
+        ? `${BaseURL}/mentor/signin`
+        : `${BaseURL}/mentee/signin`;
 
     try {
       const response = await fetch(path, {
