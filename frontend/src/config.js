@@ -3,7 +3,7 @@
 const config = {
   // Uncomment the one you want to use
 
-  // BASE_URL: "http://localhost:4000",  // Local development URL
+  //   BASE_URL: "http://localhost:4000", // Local development URL
 
   BASE_URL: "https://mentormentee-so39.onrender.com", // Deployed production URL
 };
