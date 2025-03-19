@@ -30,6 +30,7 @@ function Signup() {
     }),
     onSubmit: async (values) => {
       const formData = new FormData();
+
       Object.entries(values).forEach(([key, value]) => {
         if (key === "skills") {
           value.forEach((skill) => formData.append("skills", skill));
@@ -38,18 +39,23 @@ function Signup() {
         }
       });
 
+
       await handleSignup(formData);
-    },
+    }
+    
   });
 
   const handleSignup = async (formData) => {
     try {
+
       const response = await fetch(`${BaseURL}/${userType}/signup`, {
         method: "POST",
         body: formData, // ❌ DO NOT set 'Content-Type' manually
       });
-
+  
       const result = await response.json();
+
+
       console.log("Server Response:", result);
 
       if (response.ok) {
@@ -58,11 +64,20 @@ function Signup() {
       } else {
         console.error("Signup Error:", result.error);
       }
+  
+      console.log('User signed up successfully:', result);
+      localStorage.setItem('authToken', result.token);
+  
+      navigate('/dashboard'); // Redirect after successful signup
     } catch (error) {
+
+
+
       console.error("Network Error:", error);
     }
   };
-
+  
+  
   return (
     <div className="flex h-screen bg-gray-200">
       <div className="w-1/2 bg-gray-100 p-6 flex items-center justify-center">

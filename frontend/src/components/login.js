@@ -10,22 +10,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const path = userType === "mentor" 
-      ? "http://localhost:4000/mentor/signin" 
-      : "http://localhost:4000/mentee/signin";
-  
+    const path =
+      userType === "mentor"
+        ? "http://localhost:4000/mentor/signin"
+        : "http://localhost:4000/mentee/signin";
+
     try {
       const response = await fetch(path, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
+        console.log("Data received after login : ", data);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("isLoggedIn", "true");  // Store login status
-        navigate("/chat-page");
+        localStorage.setItem("isLoggedIn", "true"); // Store login status
+        if (userType === "mentee") navigate("/menteeDash");
+        else navigate("/mentorDash");
       } else {
         setError(data.error);
       }
@@ -33,13 +36,12 @@ const Login = () => {
       setError("Something went wrong. Please try again.");
     }
   };
-  
 
   return (
     <div className="flex h-screen bg-gray-200">
       {/* Left Side */}
       <div className="w-1/2 flex items-center justify-center bg-gray-100 p-6 rounded-lg shadow">
-      <Link to="/">
+        <Link to="/">
           <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
         </Link>
       </div>
@@ -52,7 +54,9 @@ const Login = () => {
         <div className="flex mb-4">
           <button
             className={`border p-2 rounded-md mr-2 ${
-              userType === "mentee" ? "bg-slate-600 text-white" : "bg-gray-200 text-gray-700"
+              userType === "mentee"
+                ? "bg-slate-600 text-white"
+                : "bg-gray-200 text-gray-700"
             }`}
             onClick={() => setUserType("mentee")}
           >
@@ -60,7 +64,9 @@ const Login = () => {
           </button>
           <button
             className={`border p-2 rounded-md ${
-              userType === "mentor" ? "bg-slate-600 text-white" : "bg-gray-200 text-gray-700"
+              userType === "mentor"
+                ? "bg-slate-600 text-white"
+                : "bg-gray-200 text-gray-700"
             }`}
             onClick={() => setUserType("mentor")}
           >
@@ -71,7 +77,9 @@ const Login = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               className="mt-1 p-2 w-full border rounded-md"
@@ -82,7 +90,9 @@ const Login = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
             <input
               type="password"
               className="mt-1 p-2 w-full border rounded-md"
@@ -94,14 +104,20 @@ const Login = () => {
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-          <button type="submit" className="w-full bg-slate-600 text-white py-2 rounded-md">
+          <button
+            type="submit"
+            className="w-full bg-slate-600 text-white py-2 rounded-md"
+          >
             Sign In
           </button>
         </form>
 
         <p className="mt-4 text-sm">
           Don't have an account?{" "}
-          <span className="text-blue-500 cursor-pointer" onClick={() => navigate("/signup")}>
+          <span
+            className="text-blue-500 cursor-pointer"
+            onClick={() => navigate("/signup")}
+          >
             Sign up
           </span>
         </p>
