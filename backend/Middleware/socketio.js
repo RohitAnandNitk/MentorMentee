@@ -5,7 +5,8 @@ let io; // Global Socket.IO instance
 export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin:
+        "http://localhost:3000" || "https://mentor-mentee-two.vercel.app/",
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },
