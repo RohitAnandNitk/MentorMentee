@@ -6,16 +6,20 @@ import Login from "./components/login";
 import ChatPage from "./pages/ChatPage";
 import "./App.css";
 import MentorProfile from "./components/MentorProfile";
+import MentorDash from "./components/MentorDash";
+import MenteeDash from "./components/MenteeDash";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />  {/* Fixed path for Login */}
+        <Route path="/login" element={<Login />} /> {/* Fixed path for Login */}
         <Route path="/signup" element={<Signup />} />
-        <Route path="/chat-page" element={<ChatPage />} />
-        <Route path="/profile" element={<MentorProfile/>} />
+        {/* <Route path="/chat-page" element={<ChatPage />} /> */}
+        <Route path="/profile" element={<MentorProfile />} />
+        <Route path="/mentorDash" element={<MentorDash />} />
+        <Route path="/menteeDash" element={<MenteeDash />} />
       </Routes>
     </Router>
   );

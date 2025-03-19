@@ -1,11 +1,14 @@
-import express from 'express';
+import express from "express";
 const router = express.Router();
 
+import {
+  MentorSignup,
+  MentorSignin,
+  mentorDetails,
+} from "../Controllers/Mentor.js";
 
-import { MentorSignup , MentorSignin } from '../Controllers/Mentor.js';
-
-router.post('/signup' , MentorSignup);
-router.post('/signin' , MentorSignin);
-
+router.post("/signup", MentorSignup);
+router.post("/signin", MentorSignin);
+router.get("/:id", mentorDetails);
 
 export default router;

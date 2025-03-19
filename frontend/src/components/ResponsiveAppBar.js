@@ -12,8 +12,10 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const ResponsiveAppBar = () => {
+  const [userType, setUserType] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -34,16 +36,38 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleProfile = () => {
     setAnchorElUser(null);
     navigate("/profile");
+  };
+
+  // Decode token to get userId and userType
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUserType(decodedToken.role);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
+
+  const handleDashboard = () => {
+    setAnchorElUser(null);
+    console.log("user type is :", userType);
+    if (userType === "mentee") {
+      navigate("/menteeDash");
+    } else {
+      navigate("/mentorDash");
+    }
   };
 
   const handleLogoutClick = () => {
     setIsLoggedIn(false);
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userName");
-    handleCloseUserMenu();
     navigate("/");
   };
 
@@ -114,12 +138,12 @@ const ResponsiveAppBar = () => {
                   keepMounted
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                   open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+                  onClose={handleProfile}
                 >
-                  <MenuItem onClick={handleCloseUserMenu}>
+                  <MenuItem onClick={handleProfile}>
                     <Typography textAlign="center">Profile</Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
+                  <MenuItem onClick={handleDashboard}>
                     <Typography textAlign="center">Dashboard</Typography>
                   </MenuItem>
                   <MenuItem onClick={handleLogoutClick}>
@@ -193,10 +217,10 @@ const ResponsiveAppBar = () => {
               </MenuItem>
               {isLoggedIn ? (
                 <>
-                  <MenuItem onClick={handleCloseUserMenu}>
+                  <MenuItem onClick={handleProfile}>
                     <Typography textAlign="center">Profile</Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
+                  <MenuItem onClick={handleDashboard}>
                     <Typography textAlign="center">Dashboard</Typography>
                   </MenuItem>
                   <MenuItem onClick={handleLogoutClick}>

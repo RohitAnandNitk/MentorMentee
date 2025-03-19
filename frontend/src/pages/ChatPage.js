@@ -1,11 +1,8 @@
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode
 import "./ChatPage.css"; // Import CSS file
-
-
-
 
 const socket = io("http://localhost:4000"); // Connect to backend
 
@@ -45,20 +42,20 @@ const ChatPage = () => {
     }
   }, [menteeId, mentorId]);
 
-
   const fetchAllChats = async () => {
     try {
-        const response = await axios.get(`http://localhost:4000/chat/get-all-chats?userId=${mentorId}`);
-        
-        if (response.data.success) {
-            console.log("All chats:", response.data.chats);
-            setChats(response.data.chats);
-        }
-    } catch (error) {
-        console.error("Error fetching chats:", error);
-    }
-};
+      const response = await axios.get(
+        `http://localhost:4000/chat/get-all-chats?userId=${mentorId}`
+      );
 
+      if (response.data.success) {
+        console.log("All chats:", response.data.chats);
+        setChats(response.data.chats);
+      }
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    }
+  };
 
   const fetchChatHistory = async () => {
     try {
@@ -74,7 +71,6 @@ const ChatPage = () => {
       console.error("Error fetching chat history:", error);
     }
   };
- 
 
   // Ensure socket joins the chat room after chatId is set
   useEffect(() => {
@@ -101,7 +97,11 @@ const ChatPage = () => {
 
   const sendMessage = async () => {
     if (message.trim() === "" || !chatId || !userType) {
-      console.error("Missing required fields in sendMessage:", { chatId, userType, message });
+      console.error("Missing required fields in sendMessage:", {
+        chatId,
+        userType,
+        message,
+      });
       return;
     }
 
@@ -114,18 +114,30 @@ const ChatPage = () => {
       receiverId = mentorId;
     }
 
-    const newMessage = { chatId, senderId, receiverId, role: userType, message };
+    const newMessage = {
+      chatId,
+      senderId,
+      receiverId,
+      role: userType,
+      message,
+    };
     socket.emit("sendMessage", newMessage);
 
     try {
-      const response = await axios.post("http://localhost:4000/chat/send-message", newMessage);
+      const response = await axios.post(
+        "http://localhost:4000/chat/send-message",
+        newMessage
+      );
       if (response.data.success) {
         // setMessages((prev) => [...prev, response.data.newMessage]);
       } else {
         console.error("Message sending failed:", response.data.error);
       }
     } catch (error) {
-      console.error("Error sending message:", error.response?.data || error.message);
+      console.error(
+        "Error sending message:",
+        error.response?.data || error.message
+      );
     }
 
     setMessage("");
@@ -139,14 +151,15 @@ const ChatPage = () => {
     }
   }, [messages]); // Runs every time messages update
 
-
   return (
     <div className="chat-container">
       <div className="chat-box" ref={chatBoxRef}>
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`message ${msg.senderId === userId ? "sent" : "received"}`}
+            className={`message ${
+              msg.senderId === userId ? "sent" : "received"
+            }`}
           >
             <p>{msg.message}</p>
           </div>
