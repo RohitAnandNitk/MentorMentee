@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import config from "../config.js";
 const BaseURL = config.BASE_URL;
-const socket = io(BaseURL); // Adjust to your backend URL
 
 const Login = () => {
   const [email, setEmail] = useState("");
