@@ -76,9 +76,45 @@ export const MenteeSignin = async (req, res) => {
     const token = generateToken(payload);
 
     // retutn token as response
+    console.log("mentee login with id : ", user.id);
     res.json({ token, userId: user.id });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const menteeDetails = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
+    // Corrected: Await the database query
+    const data = await Mentee.findById(userId);
+
+    // If mentee not found
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentee not found",
+      });
+    }
+
+    console.log("Data:", data);
+
+    res.status(200).json({
+      success: true,
+      message: "Mentee data fetched successfully",
+      data,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Error in fetch mentee details API" });
   }
 };

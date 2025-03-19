@@ -30,9 +30,9 @@ export const initializeSocket = (server) => {
     socket.on("sendMessage", (data) => {
       console.log("Received message data:", data);
 
-      const { chatId, senderId, receiverId, message } = data;
+      const { chatId, senderId, role, receiverId, message } = data;
 
-      if (!chatId || !senderId || !receiverId || !message) {
+      if (!chatId || !senderId || !role || !receiverId || !message) {
         console.error("Invalid message data received:", data);
         return;
       }
@@ -41,6 +41,7 @@ export const initializeSocket = (server) => {
         chatId,
         senderId,
         receiverId,
+        userType: role,
         message,
         timestamp: new Date(),
       };
