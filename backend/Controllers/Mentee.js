@@ -77,7 +77,7 @@ export const MenteeSignin = async (req, res) => {
 
     // retutn token as response
     console.log("mentee login with id : ", user.id);
-    res.json({ token, userId: user.id });
+    res.json({ success: true, token, userId: user.id });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal Server Error" });

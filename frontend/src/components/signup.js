@@ -56,25 +56,17 @@ function Signup() {
         }
       );
 
-      const result = await response.json();
-
+      const result = response.data; // ✅ Correct way to get response data
       console.log("Server Response:", result);
 
-      if (response.ok) {
+      if (response.status === 200) {
+        // ✅ Correct way to check success
         console.log("Signup Successful");
-        if (userType === "mentee") {
-          navigate("/menteeDash");
-        } else {
-          navigate("/mentorDash");
-        }
+        localStorage.setItem("authToken", result.token);
+        navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash");
       } else {
         console.error("Signup Error:", result.error);
       }
-
-      console.log("User signed up successfully:", result);
-      localStorage.setItem("authToken", result.token);
-
-      // navigate("/dashboard"); // Redirect after successful signup
     } catch (error) {
       console.error("Network Error:", error);
     }
