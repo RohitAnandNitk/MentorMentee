@@ -172,7 +172,9 @@
 //           onChange={(e) => setMessage(e.target.value)}
 //           placeholder="Type a message..."
 //         />
+
 //         <button onClick={sendMessage}>Send</button>r
+
 //       </div>
 //     </div>
 //   );

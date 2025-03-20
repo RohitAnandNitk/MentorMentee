@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Signup from "./components/signup";
 import Login from "./components/login";
-import ChatPage from "./pages/ChatPage";
+// import ChatPage from "./pages/ChatPage";
 import "./App.css";
 import MentorProfile from "./components/MentorProfile";
 import MentorDash from "./components/MentorDash";
