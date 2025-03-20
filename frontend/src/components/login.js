@@ -28,6 +28,7 @@ const Login = () => {
       );
 
       const data = response.data; // ✅ Axios already returns parsed JSON
+      console.log(response);
 
       if (response.status === 200) {
         // ✅ Check status properly
