@@ -41,6 +41,10 @@ const ResponsiveAppBar = () => {
     navigate("/profile");
   };
 
+  const handleClose = () => {
+    setAnchorElUser(null);
+  };
+
   // Decode token to get userId and userType
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -138,7 +142,7 @@ const ResponsiveAppBar = () => {
                   keepMounted
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                   open={Boolean(anchorElUser)}
-                  onClose={handleProfile}
+                  onClose={handleClose}
                 >
                   <MenuItem onClick={handleProfile}>
                     <Typography textAlign="center">Profile</Typography>
