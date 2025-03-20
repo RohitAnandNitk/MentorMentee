@@ -20,22 +20,20 @@ const Login = () => {
         : `${BaseURL}/mentee/signin`;
 
     try {
+      console.log("Sending login request with:", { email, path });
       const response = await axios.post(
         path,
         { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log(response);
-      const data = response.data; // ✅ Axios already returns parsed JSON
+      console.log("Login Response:", response.status, response.data);
+      const data = response.data;
 
       if (response.status === 200) {
-        // ✅ Check status properly
-        console.log("Data received after login : ", data);
+        console.log("Data received after login:", data);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("isLoggedIn", "true"); // Store login status
+        localStorage.setItem("isLoggedIn", "true");
         navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash");
       } else {
         setError(data.error || "Login failed. Please try again.");
