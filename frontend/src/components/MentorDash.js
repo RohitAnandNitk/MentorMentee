@@ -6,7 +6,10 @@ import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
 
 const BaseURL = config.BASE_URL;
-const socket = io(BaseURL); // Adjust to your backend URL
+const socket = io(BaseURL, {
+  transports: ["websocket", "polling"],
+  withCredentials: true,
+}); // Adjust to your backend URL
 
 const MentorDash = () => {
   const [userId, setUserId] = useState("");
