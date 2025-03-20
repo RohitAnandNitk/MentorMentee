@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import config from "../config.js";
 const BaseURL = config.BASE_URL;
 
@@ -18,11 +19,13 @@ const Login = () => {
         : `${BaseURL}/mentee/signin`;
 
     try {
-      const response = await fetch(path, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(
+        path,
+        { email, password },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {

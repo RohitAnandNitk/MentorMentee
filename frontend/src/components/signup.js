@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import axios from "axios";
 import * as Yup from "yup";
 import config from "../config.js";
 
@@ -39,45 +40,46 @@ function Signup() {
         }
       });
 
-
       await handleSignup(formData);
-    }
-    
+    },
   });
 
   const handleSignup = async (formData) => {
     try {
+      const response = await axios.post(
+        `${BaseURL}/${userType}/signup`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Ensure correct content type for FormData
+          },
+        }
+      );
 
-      const response = await fetch(`${BaseURL}/${userType}/signup`, {
-        method: "POST",
-        body: formData, // ❌ DO NOT set 'Content-Type' manually
-      });
-  
       const result = await response.json();
-
 
       console.log("Server Response:", result);
 
       if (response.ok) {
         console.log("Signup Successful");
-        navigate("/chat-page");
+        if (userType === "mentee") {
+          navigate("/menteeDash");
+        } else {
+          navigate("/mentorDash");
+        }
       } else {
         console.error("Signup Error:", result.error);
       }
-  
-      console.log('User signed up successfully:', result);
-      localStorage.setItem('authToken', result.token);
-  
-      navigate('/dashboard'); // Redirect after successful signup
+
+      console.log("User signed up successfully:", result);
+      localStorage.setItem("authToken", result.token);
+
+      // navigate("/dashboard"); // Redirect after successful signup
     } catch (error) {
-
-
-
       console.error("Network Error:", error);
     }
   };
-  
-  
+
   return (
     <div className="flex h-screen bg-gray-200">
       <div className="w-1/2 bg-gray-100 p-6 flex items-center justify-center">
