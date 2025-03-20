@@ -19,7 +19,7 @@ initializeSocket(server);
 
 // ✅ Fix CORS issue (Methods should be an array)
 const corsOption = {
-  origin: "https://mentor-mentee-two.vercel.app",
+  origin: ["http://localhost:3000", "https://mentor-mentee-two.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
