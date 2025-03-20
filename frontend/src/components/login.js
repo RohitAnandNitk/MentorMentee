@@ -13,6 +13,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("called");
     const path =
       userType === "mentor"
         ? `${BaseURL}/mentor/signin`
@@ -27,8 +28,8 @@ const Login = () => {
         }
       );
 
-      const data = response.data; // ✅ Axios already returns parsed JSON
       console.log(response);
+      const data = response.data; // ✅ Axios already returns parsed JSON
 
       if (response.status === 200) {
         // ✅ Check status properly
