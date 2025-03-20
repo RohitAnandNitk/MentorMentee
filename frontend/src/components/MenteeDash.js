@@ -5,8 +5,11 @@ import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
 import PrimarySearchAppBar from "../components/ResponsiveAppBar";
+<<<<<<< HEAD
 import { getAuthDetails } from "../User/auth.js";
 const { token, userType, userId } = getAuthDetails();
+=======
+>>>>>>> 13a686b (just added the navbar for mentor & mentee)
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -496,10 +499,17 @@ const MentorDash = () => {
 
   return (
     <div className="h-screen flex flex-col">
+<<<<<<< HEAD
       {/* Navbar at the top */}
       <PrimarySearchAppBar />
 
       {/* Sidebar + Main Content */}
+=======
+      {/* Navbar - Stays on top */}
+      <PrimarySearchAppBar />
+  
+      {/* Main Content - Sidebar + Page Content */}
+>>>>>>> 13a686b (just added the navbar for mentor & mentee)
       <div className="flex flex-1">
         {/* Sidebar */}
         <aside
@@ -515,8 +525,13 @@ const MentorDash = () => {
           </button>
           {renderSidebarContent()}
         </aside>
+<<<<<<< HEAD
 
         {/* Main Content */}
+=======
+  
+        {/* Page Content */}
+>>>>>>> 13a686b (just added the navbar for mentor & mentee)
         <main className="flex-1 p-6">
           <button
             className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
@@ -529,6 +544,7 @@ const MentorDash = () => {
       </div>
     </div>
   );
+  
 };
 
 export default MentorDash;
