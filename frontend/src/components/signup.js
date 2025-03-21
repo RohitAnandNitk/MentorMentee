@@ -4,12 +4,16 @@ import { useFormik } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
 import config from "../config.js";
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import expertiseList from "./expertiseList.js";
 
 const BaseURL = config.BASE_URL;
 
 function Signup() {
   const [userType, setUserType] = useState("mentee");
   const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -130,49 +134,81 @@ function Signup() {
             />
           </div>
 
-          {userType === "mentee" && (
+          
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Skills
               </label>
-              <input
-                type="text"
-                className="mt-1 p-2 w-full border rounded-md"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && e.target.value.trim()) {
-                    e.preventDefault();
-                    formik.setFieldValue("skills", [
-                      ...formik.values.skills,
-                      e.target.value.trim(),
-                    ]);
-                    e.target.value = "";
-                  }
-                }}
-                placeholder="Add a skill and press Enter"
-              />
-              <div className="flex flex-wrap mt-2">
-                {formik.values.skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="bg-blue-500 text-white px-2 py-1 rounded-md text-sm mr-2 mb-2"
-                  >
-                    {skill}{" "}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        formik.setFieldValue(
-                          "skills",
-                          formik.values.skills.filter((_, i) => i !== index)
-                        )
-                      }
-                    >
-                      ✕
-                    </button>
-                  </span>
-                ))}
-              </div>
+
+            
+
+              <Autocomplete
+        disablePortal
+        options={expertiseList}
+        getOptionLabel={(option) => option.label}
+        filterOptions={(options, params) =>
+          options.filter((option) =>
+            option.label.toLowerCase().includes(params.inputValue.toLowerCase())
+          )
+        }
+        sx={{ width: 300 }}
+        inputValue={inputValue}
+        onInputChange={(event, newInputValue) => {
+          setInputValue(newInputValue); // Update input field
+        }}
+        onChange={(event, newValue) => {
+          if (newValue && !formik.values.skills.includes(newValue.label)) {
+            formik.setFieldValue("skills", [...formik.values.skills, newValue.label]);
+          }
+          setTimeout(() => setInputValue(""), 0); // 🔹 Clear input field after selection
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Select a skill"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // Prevent form submission
+
+                const matchingSkill = expertiseList.find(
+                  (skill) => skill.label.toLowerCase() === inputValue.toLowerCase()
+                );
+
+                if (matchingSkill && !formik.values.skills.includes(matchingSkill.label)) {
+                  formik.setFieldValue("skills", [...formik.values.skills, matchingSkill.label]);
+                }
+
+                setTimeout(() => setInputValue(""), 0); // 🔹 Clear input field after Enter
+              }
+            }}
+          />
+        )}
+      />
+
+      <div className="flex flex-wrap mt-2">
+        {formik.values.skills.map((skill, index) => (
+          <span
+            key={index}
+            className="bg-blue-500 text-white px-2 py-1 rounded-md text-sm mr-2 mb-2"
+          >
+            {skill}{" "}
+            <button
+              type="button"
+              onClick={() =>
+                formik.setFieldValue(
+                  "skills",
+                  formik.values.skills.filter((_, i) => i !== index)
+                )
+              }
+            >
+              ✕
+            </button>
+          </span>
+        ))}
+      </div>
+
             </div>
-          )}
+        
 
           <button
             type="submit"
