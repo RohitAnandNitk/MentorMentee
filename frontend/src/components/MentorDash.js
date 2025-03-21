@@ -4,13 +4,9 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
-import PrimarySearchAppBar from "../components/ResponsiveAppBar";
 
 const BaseURL = config.BASE_URL;
-const socket = io(BaseURL, {
-  transports: ["websocket", "polling"],
-  withCredentials: true,
-}); // Adjust to your backend URL
+const socket = io(BaseURL); // Adjust to your backend URL
 
 const MentorDash = () => {
   const [userId, setUserId] = useState("");
@@ -453,41 +449,31 @@ const MentorDash = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
-      {/* Navbar at the top */}
-      <PrimarySearchAppBar />
-  
-      {/* Sidebar + Main Content */}
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside
-          className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
-            isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
-          }`}
+    <div className="flex h-screen">
+      <aside
+        className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
+          isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
+        }`}
+      >
+        <button
+          className="text-white absolute top-4 right-4 md:hidden"
+          onClick={toggleSidebar}
         >
-          <button
-            className="text-white absolute top-4 right-4 md:hidden"
-            onClick={toggleSidebar}
-          >
-            <X size={24} />
-          </button>
-          {renderSidebarContent()}
-        </aside>
-  
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <button
-            className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
-            onClick={toggleSidebar}
-          >
-            <Menu size={24} />
-          </button>
-          {renderContent()}
-        </main>
-      </div>
+          <X size={24} />
+        </button>
+        {renderSidebarContent()}
+      </aside>
+      <main className="flex-1 p-6">
+        <button
+          className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
+          onClick={toggleSidebar}
+        >
+          <Menu size={24} />
+        </button>
+        {renderContent()}
+      </main>
     </div>
   );
-  
 };
 
 export default MentorDash;

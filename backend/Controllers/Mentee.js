@@ -55,31 +55,35 @@ export const MenteeSignup = async (req, res) => {
 
 export const MenteeSignin = async (req, res) => {
   try {
+    // Extract username and password from request body
     const { email, password } = req.body;
+
+    // find the user by username
     const user = await Mentee.findOne({ email: email });
 
+    // if user not exist with that username  or password doesn't match
     if (!user || !(await user.comparePassword(password))) {
       console.log("Invalid Email or Password");
       return res.status(401).json({ error: "Invalid Email or Password" });
     }
 
+    // generate the token
     const payload = {
       userId: user.id,
       role: "mentee",
     };
+
     const token = generateToken(payload);
 
+    // retutn token as response
     console.log("mentee login with id : ", user.id);
-    res.status(200).send({
-      success: true,
-      message: "login successfully",
-      token: token, // Include the token
-    });
+    res.json({ token, userId: user.id });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export const menteeDetails = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -102,7 +106,7 @@ export const menteeDetails = async (req, res) => {
       });
     }
 
-    console.log("Data:", data);
+    // console.log("Data:", data);
 
     res.status(200).json({
       success: true,
