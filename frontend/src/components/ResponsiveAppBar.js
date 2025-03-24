@@ -38,7 +38,7 @@ const ResponsiveAppBar = () => {
 
   const handleProfile = () => {
     setAnchorElUser(null);
-    navigate("/profile");
+    navigate(`/${userType}-profile`);
   };
 
   const handleClose = () => {

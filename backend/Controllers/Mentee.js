@@ -8,11 +8,11 @@ dotenv.config();
 export const MenteeSignup = async (req, res) => {
   try {
     const { name, email, password, bio, availability } = req.body;
-    let skills = req.body.skills;
+    let fieldOfInterest = req.body.skills;
 
     // Ensure skills is an array (if sent as a string)
-    if (typeof skills === "string") {
-      skills = skills.split(",").map((skill) => skill.trim());
+    if (typeof fieldOfInterest === "string") {
+      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim());
     }
 
     // ✅ Extract profile picture from `req.file`
@@ -23,7 +23,7 @@ export const MenteeSignup = async (req, res) => {
       email,
       password,
       bio,
-      skills,
+      fieldOfInterest,
       availability,
       image,
     });
@@ -35,7 +35,7 @@ export const MenteeSignup = async (req, res) => {
       password,
       bio,
       availability,
-      skills,
+      fieldOfInterest,
       image,
     });
     const response = await newUser.save();

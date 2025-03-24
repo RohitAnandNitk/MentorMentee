@@ -47,8 +47,7 @@ const MentorProfile = () => {
     name: userData?.name,
     email: userData?.email,
     bio: userData?.bio,
-    // skills: userData?.fieldOfInterest,
-    skills: ["c++", "java", "c#"],
+    skills: userData?.expertise ?? [],
     availability: "Available for mentoring",
     image:
       "https://images.unsplash.com/photo-1526835746352-0b9da4054862?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image URL
@@ -169,6 +168,7 @@ const MentorProfile = () => {
                 gap={1}
                 mt={1}
               >
+                {console.log(mentor.skills)}
                 {mentor.skills.map((skill, index) => (
                   <Chip
                     key={index}
