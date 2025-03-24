@@ -1,9 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import useChatbase from "./ChatBot";
 
 const LandingPage = () => {
   // useChatbase();
+
+  const [mentors, setMentors] = useState([]);
+  const navigate = useNavigate();
 
   const scrollToSearchBar = () => {
     const searchBarSection = document.getElementById("search-bar-section");
@@ -16,6 +20,46 @@ const LandingPage = () => {
       searchInput.focus(); // This will focus the input field for typing
     }
   };
+
+  // useEffect(() => {
+  //   // Fetch mentor data from the backend
+  //   fetch("/api/mentors")
+  //     .then((res) => res.json())
+  //     .then((data) => setMentors(data))
+  //     .catch((err) => console.error("Error fetching mentors:", err));
+  // }, []);
+
+  useEffect(() => {
+    // Temporary Sample Data
+    const sampleMentors = [
+      {
+        id: 1,
+        name: "John Doe",
+        expertise: "Web Development Expert",
+        bio: "I help developers build scalable and robust applications.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        id: 2,
+        name: "Jane Smith",
+        expertise: "Data Science Mentor",
+        bio: "Passionate about teaching machine learning and AI concepts.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        id: 3,
+        name: "Alice Johnson",
+        expertise: "UI/UX Designer",
+        bio: "Helping designers create user-friendly and beautiful interfaces.",
+        image: "https://via.placeholder.com/150",
+      },
+    ];
+
+    // Simulate API call delay
+    setTimeout(() => {
+      setMentors(sampleMentors);
+    }, 1000);
+  }, []);
 
   return (
     <>
@@ -107,61 +151,36 @@ const LandingPage = () => {
 
         {/* Sample Mentor Profiles */}
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="John Doe"
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-800 text-center">
-                  John Doe
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Web Development Expert
-                </p>
-                <p className="text-gray-500 text-sm text-center">
-                  "I help developers build scalable and robust applications."
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Jane Smith"
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-800 text-center">
-                  Jane Smith
-                </h3>
-                <p className="text-gray-600 text-center">Data Science Mentor</p>
-                <p className="text-gray-500 text-sm text-center">
-                  "Passionate about teaching machine learning and AI concepts."
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Alice Johnson"
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-800 text-center">
-                  Alice Johnson
-                </h3>
-                <p className="text-gray-600 text-center">UI/UX Designer</p>
-                <p className="text-gray-500 text-sm text-center">
-                  "Helping designers create user-friendly and beautiful
-                  interfaces."
-                </p>
-              </div>
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {mentors.map((mentor) => (
+            <div
+              key={mentor.id}
+              className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
+              onClick={() => navigate(`/profile/${mentor.id}`)} // Navigate to mentor profile page
+            >
+              <img
+                src={mentor.image || "https://via.placeholder.com/150"}
+                alt={mentor.name}
+                className="w-24 h-24 rounded-full mx-auto mb-4"
+              />
+              <h3 className="text-xl font-bold text-gray-800 text-center">
+                {mentor.name}
+              </h3>
+              <p className="text-gray-600 text-center">{mentor.expertise}</p>
+              <p className="text-gray-500 text-sm text-center">
+                "{mentor.bio}"
+              </p>
             </div>
-            <div className="text-center mt-8">
-              <button className="bg-slate-600 text-white px-6 py-3 rounded">
-                Explore All Mentors
-              </button>
-            </div>
-          </div>
-        </section>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <button className="bg-slate-600 text-white px-6 py-3 rounded">
+            Explore All Mentors
+          </button>
+        </div>
+      </div>
+    </section>
 
         {/* Call to Action */}
         <section className="bg-gray-800 py-12 text-white">
