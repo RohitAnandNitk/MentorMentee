@@ -11,10 +11,13 @@ import MenteeDash from "./components/MenteeDash";
 import MentorshipPlans from "./components/MentorshipPlans";
 import ContactPage from "./components/ContactPage";
 import AboutPage from "./components/AboutPage";
+import ResponsiveAppBar from "./components/ResponsiveAppBar";
+import Footer from "./components/footer";
 
 function App() {
   return (
     <Router>
+      <ResponsiveAppBar/>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} /> {/* Fixed path for Login */}
@@ -27,6 +30,7 @@ function App() {
         <Route path="/contact" element={<ContactPage/>} />
         <Route path="/about" element={<AboutPage/>} />
       </Routes>
+      <Footer/>
     </Router>
   );
 }
