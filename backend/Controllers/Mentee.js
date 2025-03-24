@@ -8,11 +8,11 @@ dotenv.config();
 export const MenteeSignup = async (req, res) => {
   try {
     const { name, email, password, bio, availability } = req.body;
-    let skills = req.body.skills;
+    let fieldOfInterest = req.body.skills;
 
     // Ensure skills is an array (if sent as a string)
-    if (typeof skills === "string") {
-      skills = skills.split(",").map((skill) => skill.trim());
+    if (typeof fieldOfInterest === "string") {
+      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim());
     }
 
     // ✅ Extract profile picture from `req.file`
@@ -23,7 +23,7 @@ export const MenteeSignup = async (req, res) => {
       email,
       password,
       bio,
-      skills,
+      fieldOfInterest,
       availability,
       image,
     });
@@ -35,7 +35,7 @@ export const MenteeSignup = async (req, res) => {
       password,
       bio,
       availability,
-      skills,
+      fieldOfInterest,
       image,
     });
     const response = await newUser.save();
@@ -106,7 +106,7 @@ export const menteeDetails = async (req, res) => {
       });
     }
 
-    console.log("Data:", data);
+    // console.log("Data:", data);
 
     res.status(200).json({
       success: true,
@@ -116,5 +116,62 @@ export const menteeDetails = async (req, res) => {
   } catch (error) {
     console.log("Error:", error);
     res.status(500).json({ error: "Error in fetch mentee details API" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
+    const { name, email, bio, availability } = req.body;
+    let fieldOfInterest = req.body.skills;
+
+    // Ensure skills is an array (if sent as a string)
+    if (typeof fieldOfInterest === "string") {
+      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim());
+    }
+
+    // ✅ Extract profile picture from `req.file`
+    const image = req.file ? req.file.buffer.toString("base64") : null;
+
+    // Corrected: Await the database query
+    const data = await Mentee.findById(userId);
+    // If mentee not found
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentee not found",
+      });
+    }
+
+    //update info
+    data.name = name;
+    data.email = email;
+    data.bio = bio;
+    data.availability = availability;
+    data.fieldOfInterest = fieldOfInterest;
+    data.image = image;
+
+    // console.log("Data:", data);
+    await data.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Mentee profile updated successfully",
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error at mentee update profile.",
+    });
   }
 };

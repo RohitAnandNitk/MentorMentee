@@ -4,13 +4,17 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
+import PrimarySearchAppBar from "../components/ResponsiveAppBar";
+import { getAuthDetails } from "../User/auth.js";
+const { token, userType, userId } = getAuthDetails();
 
 const BaseURL = config.BASE_URL;
-const socket = io(BaseURL); // Adjust to your backend URL
+const socket = io(BaseURL, {
+  transports: ["websocket", "polling"],
+  withCredentials: true,
+}); // Adjust to your backend URL
 
 const MentorDash = () => {
-  const [userId, setUserId] = useState("");
-  const [userType, setUserType] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
   const [messagingUsers, setMessagingUsers] = useState(null);
@@ -19,34 +23,49 @@ const MentorDash = () => {
   const [chatId, setChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [userData, setUserData] = useState(null);
   const [mentorDetails, setMentorDetails] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    expertise: ["Web Development", "JavaScript"],
-    bio: "Experienced web developer.",
+    name: "",
+    email: "",
+    fieldOfInterest: [],
+    bio: "",
     availability: "Available",
     profilePicture: "",
   });
-  const chatBoxRef = useRef(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // Decode token to get userId and userType
   useEffect(() => {
-    if (token) {
-      try {
-        console.log("token is :", token);
-        const decodedToken = jwtDecode(token);
-        console.log(
-          "user role " + decodedToken.role + " and id : " + decodedToken.userId
-        );
-        setUserId(decodedToken.userId);
-        setUserType(decodedToken.role);
-      } catch (error) {
-        console.error("Invalid token:", error);
-      }
-    }
-  }, []);
+    if (!userType || !userId) return; // Prevent execution if values are missing
 
+    const fetchUserData = async () => {
+      try {
+        console.log("Fetching user data...");
+        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        console.log("User data received:", response.data.data);
+
+        setUserData(response.data.data);
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [userType, userId]);
+
+  // Update mentorDetails when userData is set
+  useEffect(() => {
+    if (userData) {
+      setMentorDetails({
+        name: userData.name || "",
+        email: userData.email || "",
+        fieldOfInterest: userData.fieldOfInterest || [],
+        bio: userData.bio || "",
+        availability: userData.availability || "Available",
+        profilePicture: userData.profilePicture || "",
+      });
+    }
+  }, [userData]);
+
+  const chatBoxRef = useRef(null);
   // Fetch chat history when a mentee is selected
   useEffect(() => {
     if (selectedUserId && userId) {
@@ -374,12 +393,12 @@ const MentorDash = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Expertise (comma-separated)
+                  Field Of Interest (comma-separated)
                 </label>
                 <input
                   type="text"
-                  name="expertise"
-                  value={mentorDetails.expertise.join(", ")}
+                  name="fieldOfInterest"
+                  value={mentorDetails.fieldOfInterest.join(", ")}
                   onChange={handleExpertiseChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
@@ -451,36 +470,63 @@ const MentorDash = () => {
     });
   };
 
+  const updateMenteeDetails = async () => {
+    try {
+      const response = await axios.put(
+        `${BaseURL}/${userType}/update-profile/${userId}`,
+        mentorDetails // ✅ Send `mentorDetails` directly
+      );
+
+      if (!response.data.success) {
+        // ✅ Check `response.data.success`
+        console.log("Something went wrong at update-profile in backend");
+        return;
+      }
+
+      console.log("Profile updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error at update profile function:", error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Updated Mentor Details:", mentorDetails);
-    // Add backend update logic here if needed
+    updateMenteeDetails();
   };
 
   return (
-    <div className="flex h-screen">
-      <aside
-        className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
-          isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
-        }`}
-      >
-        <button
-          className="text-white absolute top-4 right-4 md:hidden"
-          onClick={toggleSidebar}
+    <div className="h-screen flex flex-col">
+      {/* Navbar at the top */}
+      <PrimarySearchAppBar />
+
+      {/* Sidebar + Main Content */}
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside
+          className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
+            isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
+          }`}
         >
-          <X size={24} />
-        </button>
-        {renderSidebarContent()}
-      </aside>
-      <main className="flex-1 p-6">
-        <button
-          className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
-          onClick={toggleSidebar}
-        >
-          <Menu size={24} />
-        </button>
-        {renderContent()}
-      </main>
+          <button
+            className="text-white absolute top-4 right-4 md:hidden"
+            onClick={toggleSidebar}
+          >
+            <X size={24} />
+          </button>
+          {renderSidebarContent()}
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <button
+            className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
+            onClick={toggleSidebar}
+          >
+            <Menu size={24} />
+          </button>
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import cors from "cors";
 import http from "http";
 import multer from "multer";
 import bodyParser from "body-parser";
-import db from "./config/db.js";
+import db from "./Config/db.js";
 import MentorRoute from "./Routes/MentorRoutes.js";
 import MenteeRoute from "./Routes/MenteeRoutes.js";
 import ChatRoutes from "./Routes/ChatRoutes.js";
@@ -19,7 +19,8 @@ initializeSocket(server);
 
 // ✅ Fix CORS issue (Methods should be an array)
 const corsOption = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "https://mentor-mentee-jet.vercel.app"],
+
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };

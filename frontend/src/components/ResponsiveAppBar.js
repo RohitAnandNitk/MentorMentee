@@ -38,7 +38,11 @@ const ResponsiveAppBar = () => {
 
   const handleProfile = () => {
     setAnchorElUser(null);
-    navigate("/profile");
+    navigate(`/${userType}-profile`);
+  };
+
+  const handleClose = () => {
+    setAnchorElUser(null);
   };
 
   // Decode token to get userId and userType
@@ -138,7 +142,7 @@ const ResponsiveAppBar = () => {
                   keepMounted
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                   open={Boolean(anchorElUser)}
-                  onClose={handleProfile}
+                  onClose={handleClose}
                 >
                   <MenuItem onClick={handleProfile}>
                     <Typography textAlign="center">Profile</Typography>
@@ -215,38 +219,37 @@ const ResponsiveAppBar = () => {
                   <Typography textAlign="center">Contact</Typography>
                 </Link>
               </MenuItem>
-              {isLoggedIn ? (
-                <>
-                  <MenuItem onClick={handleProfile}>
-                    <Typography textAlign="center">Profile</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleDashboard}>
-                    <Typography textAlign="center">Dashboard</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleLogoutClick}>
-                    <Typography textAlign="center">Logout</Typography>
-                  </MenuItem>
-                </>
-              ) : (
-                <>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Link
-                      to="/login"
-                      style={{ textDecoration: "none", color: "#1f2937" }}
-                    >
-                      <Typography textAlign="center">Login</Typography>
-                    </Link>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <Link
-                      to="/signup"
-                      style={{ textDecoration: "none", color: "#1f2937" }}
-                    >
-                      <Typography textAlign="center">Sign Up</Typography>
-                    </Link>
-                  </MenuItem>
-                </>
-              )}
+
+              {isLoggedIn
+                ? [
+                    <MenuItem key="profile" onClick={handleProfile}>
+                      <Typography textAlign="center">Profile</Typography>
+                    </MenuItem>,
+                    <MenuItem key="dashboard" onClick={handleDashboard}>
+                      <Typography textAlign="center">Dashboard</Typography>
+                    </MenuItem>,
+                    <MenuItem key="logout" onClick={handleLogoutClick}>
+                      <Typography textAlign="center">Logout</Typography>
+                    </MenuItem>,
+                  ]
+                : [
+                    <MenuItem key="login" onClick={handleCloseNavMenu}>
+                      <Link
+                        to="/login"
+                        style={{ textDecoration: "none", color: "#1f2937" }}
+                      >
+                        <Typography textAlign="center">Login</Typography>
+                      </Link>
+                    </MenuItem>,
+                    <MenuItem key="signup" onClick={handleCloseNavMenu}>
+                      <Link
+                        to="/signup"
+                        style={{ textDecoration: "none", color: "#1f2937" }}
+                      >
+                        <Typography textAlign="center">Sign Up</Typography>
+                      </Link>
+                    </MenuItem>,
+                  ]}
             </Menu>
           </Box>
         </Toolbar>
