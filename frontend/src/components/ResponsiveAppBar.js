@@ -12,28 +12,26 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "./AuthContext";
+
 
 const ResponsiveAppBar = () => {
-  const [userType, setUserType] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("");
+  const { isLoggedIn, userType, userName, logout } = useAuth();
+  const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const navigate = useNavigate();
   // Load login state from localStorage when the component mounts
-  useEffect(() => {
-    const storedLoginState = localStorage.getItem("isLoggedIn");
-    const storedUserName = localStorage.getItem("userName");
 
-    if (storedLoginState === "true") {
-      setIsLoggedIn(true);
-      setUserName(storedUserName || "User");
-    }
-  }, []);
+  useEffect(() => {
+    setAnchorElUser(null); // Close the menu when login state changes
+  }, [isLoggedIn]);
 
   const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+    if (anchorElUser) {
+      setAnchorElUser(null);
+    } else {
+      setAnchorElUser(event.currentTarget);
+    }
   };
 
   const handleProfile = () => {
@@ -46,17 +44,7 @@ const ResponsiveAppBar = () => {
   };
 
   // Decode token to get userId and userType
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        setUserType(decodedToken.role);
-      } catch (error) {
-        console.error("Invalid token:", error);
-      }
-    }
-  }, []);
+  
 
   const handleDashboard = () => {
     setAnchorElUser(null);
@@ -68,10 +56,9 @@ const ResponsiveAppBar = () => {
     }
   };
 
-  const handleLogoutClick = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userName");
+  const handleLogout = () => {
+    logout();  // Call logout function from context
+    setAnchorElUser(null);
     navigate("/");
   };
 
@@ -144,16 +131,10 @@ const ResponsiveAppBar = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleProfile}>
-                    <Typography textAlign="center">Profile</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleDashboard}>
-                    <Typography textAlign="center">Dashboard</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleLogoutClick}>
-                    <Typography textAlign="center">Logout</Typography>
-                  </MenuItem>
-                </Menu>
+                  <MenuItem onClick={() => navigate(`/${userType}-profile`)}>Profile</MenuItem>
+              <MenuItem onClick={() => navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash")}>Dashboard</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
               </Box>
             ) : (
               <>
@@ -250,6 +231,7 @@ const ResponsiveAppBar = () => {
                       </Link>
                     </MenuItem>,
                   ]}
+
             </Menu>
           </Box>
         </Toolbar>

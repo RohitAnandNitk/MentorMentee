@@ -84,7 +84,7 @@ function Signup() {
         </Link>
       </div>
 
-      <div className="w-1/2 p-8">
+      <div className="w-1/2 p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
         <div className="flex mb-4">
           {["mentee", "mentor"].map((type) => (

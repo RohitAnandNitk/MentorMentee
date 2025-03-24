@@ -13,9 +13,11 @@ import ContactPage from "./components/ContactPage";
 import AboutPage from "./components/AboutPage";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import Footer from "./components/footer";
+import { AuthProvider } from "../src/components/AuthContext";
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <ResponsiveAppBar/>
       <Routes>
@@ -32,6 +34,7 @@ function App() {
       </Routes>
       <Footer/>
     </Router>
+    </AuthProvider>
   );
 }
 
