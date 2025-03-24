@@ -448,8 +448,12 @@ const MentorDash = () => {
     // Add backend update logic here if needed
   };
 
-  return (
-    <div className="flex h-screen">
+  return (<div className="h-screen flex flex-col">
+    {/* Navbar at the top */}
+
+    {/* Sidebar + Main Content */}
+    <div className="flex flex-1">
+      {/* Sidebar */}
       <aside
         className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
           isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
@@ -463,6 +467,8 @@ const MentorDash = () => {
         </button>
         {renderSidebarContent()}
       </aside>
+
+      {/* Main Content */}
       <main className="flex-1 p-6">
         <button
           className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
@@ -473,7 +479,9 @@ const MentorDash = () => {
         {renderContent()}
       </main>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default MentorDash;

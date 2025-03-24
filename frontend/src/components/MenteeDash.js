@@ -4,9 +4,6 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
-import PrimarySearchAppBar from "../components/ResponsiveAppBar";
-import { getAuthDetails } from "../User/auth.js";
-const { token, userType, userId } = getAuthDetails();
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -497,8 +494,6 @@ const MentorDash = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Navbar at the top */}
-      <PrimarySearchAppBar />
-
       {/* Sidebar + Main Content */}
       <div className="flex flex-1">
         {/* Sidebar */}
