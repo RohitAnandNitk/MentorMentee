@@ -14,7 +14,6 @@ import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
-
 const ResponsiveAppBar = () => {
   const { isLoggedIn, userType, userName, logout } = useAuth();
   const navigate = useNavigate();
@@ -43,8 +42,7 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(null);
   };
 
-  // Decode token to get userId and userType
-  
+  const handleLogoutClick = () => {};
 
   const handleDashboard = () => {
     setAnchorElUser(null);
@@ -57,7 +55,7 @@ const ResponsiveAppBar = () => {
   };
 
   const handleLogout = () => {
-    logout();  // Call logout function from context
+    logout(); // Call logout function from context
     setAnchorElUser(null);
     navigate("/");
   };
@@ -131,10 +129,20 @@ const ResponsiveAppBar = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={() => navigate(`/${userType}-profile`)}>Profile</MenuItem>
-              <MenuItem onClick={() => navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash")}>Dashboard</MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            </Menu>
+                  <MenuItem onClick={() => navigate(`/${userType}-profile`)}>
+                    Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() =>
+                      navigate(
+                        userType === "mentee" ? "/menteeDash" : "/mentorDash"
+                      )
+                    }
+                  >
+                    Dashboard
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
               </Box>
             ) : (
               <>
@@ -231,7 +239,6 @@ const ResponsiveAppBar = () => {
                       </Link>
                     </MenuItem>,
                   ]}
-
             </Menu>
           </Box>
         </Toolbar>

@@ -44,10 +44,8 @@ const MentorDash = () => {
   }, []);
 
   // Fetch chat history when a mentee is selected
-  
 
   const fetchChatHistory = useCallback(async () => {
-
     if (!selectedUserId || !userId) return;
 
     try {
@@ -282,64 +280,68 @@ const MentorDash = () => {
             </div>
           </>
         );
-        case "Messaging":
-          if (selectedUserId) {
-            return (
-              <div className="flex flex-col h-full">
-                {/* Chat Box */}
-                <div
-                  className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded shadow-md"
-                  style={{ maxHeight: "70vh" }}
-                  ref={chatBoxRef}
-                >
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`mb-2 p-3 rounded-lg max-w-xs ${
-                        msg.userType === "mentor"
-                          ? "bg-blue-300 text-black mr-auto" // Mentor messages on left
-                          : "bg-green-500 text-white ml-auto" // Mentee messages on right
-                      }`}
-                    >
-                      <p>{msg.message}</p>
-                    </div>
-                  ))}
-                </div>
-        
-                {/* Input Box */}
-                <div className="mt-4 flex p-2 bg-white border-t shadow-md">
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 p-2 border rounded-l outline-none"
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                  />
-                  <button
-                    onClick={sendMessage}
-                    className="p-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 transition"
-                  >
-                    Send
-                  </button>
-                </div>
-              </div>
-            );
-          }
-        
-          // Default view when no user is selected
+      case "Messaging":
+        if (selectedUserId) {
           return (
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-                <h2 className="text-lg font-semibold mb-4 text-center">Messaging</h2>
-                <p className="text-gray-600 text-center">Select a contact to begin messaging.</p>
-                <div className="mt-4 text-center">
-                  <MessageSquare size={48} className="mx-auto text-gray-400" />
-                </div>
+            <div className="flex flex-col h-full">
+              {/* Chat Box */}
+              <div
+                className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded shadow-md"
+                style={{ maxHeight: "70vh" }}
+                ref={chatBoxRef}
+              >
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`mb-2 p-3 rounded-lg max-w-xs ${
+                      msg.userType === "mentor"
+                        ? "bg-blue-300 text-black mr-auto" // Mentor messages on left
+                        : "bg-green-500 text-white ml-auto" // Mentee messages on right
+                    }`}
+                  >
+                    <p>{msg.message}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Input Box */}
+              <div className="mt-4 flex p-2 bg-white border-t shadow-md">
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex-1 p-2 border rounded-l outline-none"
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                />
+                <button
+                  onClick={sendMessage}
+                  className="p-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 transition"
+                >
+                  Send
+                </button>
               </div>
             </div>
           );
-        
+        }
+
+        // Default view when no user is selected
+        return (
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+              <h2 className="text-lg font-semibold mb-4 text-center">
+                Messaging
+              </h2>
+              <p className="text-gray-600 text-center">
+                Select a contact to begin messaging.
+              </p>
+              <div className="mt-4 text-center">
+                <MessageSquare size={48} className="mx-auto text-gray-400" />
+              </div>
+            </div>
+          </div>
+        );
+
       case "Edit Profile":
         return (
           <div className="p-4">
@@ -454,40 +456,40 @@ const MentorDash = () => {
     // Add backend update logic here if needed
   };
 
-  return (<div className="h-screen flex flex-col">
-    {/* Navbar at the top */}
+  return (
+    <div className="h-screen flex flex-col">
+      {/* Navbar at the top */}
 
-    {/* Sidebar + Main Content */}
-    <div className="flex flex-1">
-      {/* Sidebar */}
-      <aside
-        className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
-          isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
-        }`}
-      >
-        <button
-          className="text-white absolute top-4 right-4 md:hidden"
-          onClick={toggleSidebar}
+      {/* Sidebar + Main Content */}
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside
+          className={`bg-gray-800 text-white p-4 transition-all duration-300 ${
+            isSidebarOpen ? "w-1/4" : "w-0 overflow-hidden"
+          }`}
         >
-          <X size={24} />
-        </button>
-        {renderSidebarContent()}
-      </aside>
+          <button
+            className="text-white absolute top-4 right-4 md:hidden"
+            onClick={toggleSidebar}
+          >
+            <X size={24} />
+          </button>
+          {renderSidebarContent()}
+        </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6">
-        <button
-          className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
-          onClick={toggleSidebar}
-        >
-          <Menu size={24} />
-        </button>
-        {renderContent()}
-      </main>
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <button
+            className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
+            onClick={toggleSidebar}
+          >
+            <Menu size={24} />
+          </button>
+          {renderContent()}
+        </main>
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default MentorDash;
