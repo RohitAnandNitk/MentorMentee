@@ -9,6 +9,7 @@ import MentorRoute from "./Routes/MentorRoutes.js";
 import MenteeRoute from "./Routes/MenteeRoutes.js";
 import ChatRoutes from "./Routes/ChatRoutes.js";
 import { initializeSocket } from "./Middleware/socketio.js";
+import MatchingRoutes from "./Routes/MatchingRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -39,6 +40,7 @@ app.use(upload.single("image")); // Middleware to handle file uploads
 app.use("/mentor", MentorRoute);
 app.use("/mentee", MenteeRoute);
 app.use("/chat", ChatRoutes);
+app.use("/suggest", MatchingRoutes);
 
 app.get("/api/chatbase-key", (req, res) => {
   res.json({ key: process.env.CHATBASE_SECRET_KEY });
