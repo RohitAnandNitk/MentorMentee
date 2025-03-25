@@ -14,7 +14,7 @@ const socket = io(BaseURL, {
   withCredentials: true,
 }); // Adjust to your backend URL
 
-const MentorDash = () => {
+const MenteeDash = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
   const [messagingUsers, setMessagingUsers] = useState(null);
@@ -531,4 +531,4 @@ const MentorDash = () => {
   );
 };
 
-export default MentorDash;
+export default MenteeDash;
