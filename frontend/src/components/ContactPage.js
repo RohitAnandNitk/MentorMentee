@@ -1,11 +1,11 @@
 import React from "react";
-import PrimarySearchAppBar from "../components/ResponsiveAppBar";
+
 import { Link } from "react-router-dom";
 
 const ContactPage = () => {
   return (
     <>
-      <PrimarySearchAppBar />
+
       <div className="font-sans">
         {/* Contact Header */}
         <header className="bg-gray-100 p-6 rounded-lg shadow text-center">

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config.js";
+import { useAuth } from "./AuthContext";  // ✅ Move this to the top
+
 const BaseURL = config.BASE_URL;
 
 const Login = () => {
@@ -10,33 +12,24 @@ const Login = () => {
   const [userType, setUserType] = useState("mentee");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();  // ✅ Correctly placed
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("called");
     const path =
       userType === "mentor"
         ? `${BaseURL}/mentor/signin`
         : `${BaseURL}/mentee/signin`;
 
     try {
-      console.log("Sending login request with:", { email, path });
-      const response = await axios.post(
-        path,
-        { email, password },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      console.log("Login Response:", response.status, response.data);
-      const data = response.data;
+      const response = await axios.post(path, { email, password });
 
       if (response.status === 200) {
-        console.log("Data received after login:", data);
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("isLoggedIn", "true");
+        const { token, userName } = response.data;  // ✅ Correctly extract `data`
+        login(token, userType, userName);  // ✅ Use extracted variables
         navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash");
       } else {
-        setError(data.error || "Login failed. Please try again.");
+        setError(response.data.error || "Login failed. Please try again."); // ✅ Use response.data
       }
     } catch (err) {
       console.error("Login error:", err);
