@@ -1,10 +1,13 @@
 import React from "react";
-import PrimarySearchAppBar from "../components/ResponsiveAppBar";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import useChatbase from "./ChatBot";
 
 const LandingPage = () => {
   // useChatbase();
+
+  const [mentors, setMentors] = useState([]);
+  const navigate = useNavigate();
 
   const scrollToSearchBar = () => {
     const searchBarSection = document.getElementById("search-bar-section");
@@ -18,9 +21,48 @@ const LandingPage = () => {
     }
   };
 
+  // useEffect(() => {
+  //   // Fetch mentor data from the backend
+  //   fetch("/api/mentors")
+  //     .then((res) => res.json())
+  //     .then((data) => setMentors(data))
+  //     .catch((err) => console.error("Error fetching mentors:", err));
+  // }, []);
+
+  useEffect(() => {
+    // Temporary Sample Data
+    const sampleMentors = [
+      {
+        id: 1,
+        name: "John Doe",
+        expertise: "Web Development Expert",
+        bio: "I help developers build scalable and robust applications.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        id: 2,
+        name: "Jane Smith",
+        expertise: "Data Science Mentor",
+        bio: "Passionate about teaching machine learning and AI concepts.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        id: 3,
+        name: "Alice Johnson",
+        expertise: "UI/UX Designer",
+        bio: "Helping designers create user-friendly and beautiful interfaces.",
+        image: "https://via.placeholder.com/150",
+      },
+    ];
+
+    // Simulate API call delay
+    setTimeout(() => {
+      setMentors(sampleMentors);
+    }, 1000);
+  }, []);
+
   return (
     <>
-      <PrimarySearchAppBar />
       <div className="font-sans">
         {/* Hero Section */}
         <header className="bg-gray-100 p-6 rounded-lg shadow">
@@ -109,61 +151,36 @@ const LandingPage = () => {
 
         {/* Sample Mentor Profiles */}
         <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="John Doe"
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-800 text-center">
-                  John Doe
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Web Development Expert
-                </p>
-                <p className="text-gray-500 text-sm text-center">
-                  "I help developers build scalable and robust applications."
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Jane Smith"
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-800 text-center">
-                  Jane Smith
-                </h3>
-                <p className="text-gray-600 text-center">Data Science Mentor</p>
-                <p className="text-gray-500 text-sm text-center">
-                  "Passionate about teaching machine learning and AI concepts."
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Alice Johnson"
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="text-xl font-bold text-gray-800 text-center">
-                  Alice Johnson
-                </h3>
-                <p className="text-gray-600 text-center">UI/UX Designer</p>
-                <p className="text-gray-500 text-sm text-center">
-                  "Helping designers create user-friendly and beautiful
-                  interfaces."
-                </p>
-              </div>
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {mentors.map((mentor) => (
+            <div
+              key={mentor.id}
+              className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
+              onClick={() => navigate(`/profile/${mentor.id}`)} // Navigate to mentor profile page
+            >
+              <img
+                src={mentor.image || "https://via.placeholder.com/150"}
+                alt={mentor.name}
+                className="w-24 h-24 rounded-full mx-auto mb-4"
+              />
+              <h3 className="text-xl font-bold text-gray-800 text-center">
+                {mentor.name}
+              </h3>
+              <p className="text-gray-600 text-center">{mentor.expertise}</p>
+              <p className="text-gray-500 text-sm text-center">
+                "{mentor.bio}"
+              </p>
             </div>
-            <div className="text-center mt-8">
-              <button className="bg-slate-600 text-white px-6 py-3 rounded">
-                Explore All Mentors
-              </button>
-            </div>
-          </div>
-        </section>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <button className="bg-slate-600 text-white px-6 py-3 rounded">
+            Explore All Mentors
+          </button>
+        </div>
+      </div>
+    </section>
 
         {/* Call to Action */}
         <section className="bg-gray-800 py-12 text-white">
@@ -178,254 +195,6 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/*footer */}
-
-        <footer className="bg-gray-800 text-white py-12">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
-              {/* Logo and Description */}
-              <div>
-                <h2 className="text-lg font-bold mb-4">MentorCruise</h2>
-                <p className="text-gray-400">
-                  Your trusted source to find highly-vetted mentors & industry
-                  professionals to move your career ahead.
-                </p>
-                <div className="flex space-x-4 mt-4">
-                  <Link to="/facebook" aria-label="Facebook">
-                    <img src="/icons/facebook.svg" alt="Facebook" />
-                  </Link>
-                  <Link to="/instagram" aria-label="Instagram">
-                    <img src="/icons/instagram.svg" alt="Instagram" />
-                  </Link>
-                  <Link to="/twitter" aria-label="Twitter">
-                    <img src="/icons/twitter.svg" alt="Twitter" />
-                  </Link>
-                  <Link to="/linkedin" aria-label="LinkedIn">
-                    <img src="/icons/linkedin.svg" alt="LinkedIn" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Platform Links */}
-              <div>
-                <h3 className="text-lg font-bold mb-4">PLATFORM</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link
-                      to="/browse-mentors"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Browse Mentors
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/book-session"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Book a Session
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/become-mentor"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Become a Mentor
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/mentorship-teams"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Mentorship for Teams
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/testimonials"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Testimonials
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Resources Links */}
-              <div>
-                <h3 className="text-lg font-bold mb-4">RESOURCES</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link
-                      to="/newsletter"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Newsletter
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/books"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Books
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/perks"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Perks
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/templates"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Templates
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/career-paths"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Career Paths
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/blog" className="text-gray-400 hover:text-white">
-                      Blog
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Company Links */}
-              <div>
-                <h3 className="text-lg font-bold mb-4">COMPANY</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link
-                      to="/about"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/case-studies"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Case Studies
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/partner-program"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Partner Program
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/code-of-conduct"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Code of Conduct
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/privacy-policy"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/dmca" className="text-gray-400 hover:text-white">
-                      DMCA
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Support Links */}
-              <div>
-                <h3 className="text-lg font-bold mb-4">SUPPORT</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link to="/faq" className="text-gray-400 hover:text-white">
-                      FAQ
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/contact"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      Contact
-                    </Link>
-                  </li>
-                </ul>
-                <div className="mt-4">
-                  <h3 className="text-lg font-bold mb-4">EXPLORE</h3>
-                  <div className="flex flex-wrap space-x-4">
-                    <ul className="space-y-2">
-                      <li>
-                        <Link
-                          to="/groups"
-                          className="text-gray-400 hover:text-white"
-                        >
-                          Groups
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/companies"
-                          className="text-gray-400 hover:text-white"
-                        >
-                          Companies
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/fractional-executives"
-                          className="text-gray-400 hover:text-white"
-                        >
-                          Fractional Executives
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/part-time-experts"
-                          className="text-gray-400 hover:text-white"
-                        >
-                          Part-Time Experts
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Explore Section */}
-            <div className="mt-12"></div>
-
-            {/* Footer Bottom */}
-            <div className="mt-12 text-center text-gray-400">
-              <p>&copy; 2025 MentorConnect. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
       </div>
     </>
   );
