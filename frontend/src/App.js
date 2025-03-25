@@ -17,6 +17,7 @@ import MenteeProfile from "./components/menteeProfile";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import Footer from "./components/footer";
 import { AuthProvider } from "../src/components/AuthContext";
+import AllMentor from "./components/AllMentor";
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/plan" element={<MentorshipPlans />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/all-mentors" element={<AllMentor />} />
       </Routes>
       <Footer/>
     </Router>
