@@ -7,10 +7,37 @@ dotenv.config();
 
 export const MentorSignup = async (req, res) => {
   try {
-    const data = req.body; // assuming the request body contain the User data
-    // create a new user document using the mongoose model
-    const newUser = new Mentor(data);
-    // save the new User to the database
+    const { name, email, password, bio, availability } = req.body;
+    let expertise = req.body.skills;
+
+    // Ensure skills is an array (if sent as a string)
+    if (typeof expertise === "string") {
+      expertise = expertise.split(",").map((skill) => skill.trim());
+    }
+
+    // ✅ Extract profile picture from `req.file`
+    const image = req.file ? req.file.buffer.toString("base64") : null;
+
+    console.log("Received Data:", {
+      name,
+      email,
+      password,
+      bio,
+      expertise,
+      availability,
+      image,
+    });
+
+    // Create new user
+    const newUser = new Mentor({
+      name,
+      email,
+      password,
+      bio,
+      availability,
+      expertise,
+      image,
+    });
     const response = await newUser.save();
     // message
     console.log("data saved");

@@ -13,31 +13,33 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("called");
     const path =
       userType === "mentor"
         ? `${BaseURL}/mentor/signin`
         : `${BaseURL}/mentee/signin`;
 
     try {
+      console.log("Sending login request with:", { email, path });
       const response = await axios.post(
         path,
         { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Data received after login : ", data);
+      console.log("Login Response:", response.status, response.data);
+      const data = response.data;
+
+      if (response.status === 200) {
+        console.log("Data received after login:", data);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("isLoggedIn", "true"); // Store login status
-        if (userType === "mentee") navigate("/menteeDash");
-        else navigate("/mentorDash");
+        localStorage.setItem("isLoggedIn", "true");
+        navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash");
       } else {
-        setError(data.error);
+        setError(data.error || "Login failed. Please try again.");
       }
     } catch (err) {
+      console.error("Login error:", err);
       setError("Something went wrong. Please try again.");
     }
   };
