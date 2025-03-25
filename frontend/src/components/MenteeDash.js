@@ -4,19 +4,9 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
-<<<<<<< HEAD
 
-
-
-
-import { getAuthDetails } from "../User/auth";
-
-const { token, userType, userId } = getAuthDetails();
-
-=======
 import { getAuthDetails } from "../User/auth.js";
 const { token, userType, userId } = getAuthDetails();
->>>>>>> a639b16 (draft)
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -506,11 +496,6 @@ const MenteeDash = () => {
 
   return (
     <div className="h-screen flex flex-col">
-
-<<<<<<< HEAD
-=======
-
->>>>>>> a639b16 (draft)
       <div className="flex flex-1">
         {/* Sidebar */}
         <aside
@@ -527,10 +512,6 @@ const MenteeDash = () => {
           {renderSidebarContent()}
         </aside>
 
-<<<<<<< HEAD
-=======
-        {/* Main Content */}
->>>>>>> a639b16 (draft)
         <main className="flex-1 p-6">
           <button
             className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
@@ -545,8 +526,4 @@ const MenteeDash = () => {
   );
 };
 
-<<<<<<< HEAD
 export default MenteeDash;
-=======
-export default MenteeDash;
->>>>>>> 4c1d64ee362081fb0d8a2c4f923c26dcdc7f4d8b
