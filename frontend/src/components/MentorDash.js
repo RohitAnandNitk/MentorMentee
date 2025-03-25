@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, X, Home, MessageSquare, User, ArrowLeft } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -46,13 +46,10 @@ const MentorDash = () => {
   }, []);
 
   // Fetch chat history when a mentee is selected
-  useEffect(() => {
-    if (selectedUserId && userId) {
-      fetchChatHistory();
-    }
-  }, [selectedUserId, userId]);
 
-  const fetchChatHistory = async () => {
+  const fetchChatHistory = useCallback(async () => {
+    if (!selectedUserId || !userId) return;
+
     try {
       const response = await axios.post(`${BaseURL}/chat/get-or-create-chat`, {
         menteeId: selectedUserId,
@@ -65,7 +62,11 @@ const MentorDash = () => {
     } catch (error) {
       console.error("Error fetching chat history:", error);
     }
-  };
+  }, [selectedUserId, userId]);
+
+  useEffect(() => {
+    fetchChatHistory();
+  }, [fetchChatHistory]);
 
   // Join chat room via Socket.IO
   useEffect(() => {
@@ -285,35 +286,39 @@ const MentorDash = () => {
         if (selectedUserId) {
           return (
             <div className="flex flex-col h-full">
+              {/* Chat Box */}
               <div
-                className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded"
+                className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded shadow-md"
+                style={{ maxHeight: "70vh" }}
                 ref={chatBoxRef}
               >
                 {messages.map((msg) => (
                   <div
-                    className={`mb-2 p-2 rounded max-w-xs ${
-                      msg.userType === "mentee"
-                        ? "bg-blue-300 text-black mr-auto" // Sender's message (right)
-                        : "bg-gray-500 text-white ml-auto" // Receiver's message (left)
-                    }`}
                     key={msg.id}
+                    className={`mb-2 p-3 rounded-lg max-w-xs ${
+                      msg.userType === "mentor"
+                        ? "bg-blue-300 text-black mr-auto" // Mentor messages on left
+                        : "bg-green-500 text-white ml-auto" // Mentee messages on right
+                    }`}
                   >
                     <p>{msg.message}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 flex">
+
+              {/* Input Box */}
+              <div className="mt-4 flex p-2 bg-white border-t shadow-md">
                 <input
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 p-2 border rounded-l"
+                  className="flex-1 p-2 border rounded-l outline-none"
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 />
                 <button
                   onClick={sendMessage}
-                  className="p-2 bg-blue-500 text-white rounded-r hover:bg-blue-600"
+                  className="p-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 transition"
                 >
                   Send
                 </button>
@@ -321,6 +326,8 @@ const MentorDash = () => {
             </div>
           );
         }
+
+        // Default view when no user is selected
         return (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
@@ -336,6 +343,7 @@ const MentorDash = () => {
             </div>
           </div>
         );
+
       case "Edit Profile":
         return (
           <div className="p-4">
@@ -453,8 +461,7 @@ const MentorDash = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Navbar at the top */}
-      <PrimarySearchAppBar />
-  
+
       {/* Sidebar + Main Content */}
       <div className="flex flex-1">
         {/* Sidebar */}
@@ -471,7 +478,7 @@ const MentorDash = () => {
           </button>
           {renderSidebarContent()}
         </aside>
-  
+
         {/* Main Content */}
         <main className="flex-1 p-6">
           <button

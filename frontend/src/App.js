@@ -11,11 +11,19 @@ import MenteeDash from "./components/MenteeDash";
 import MentorshipPlans from "./components/MentorshipPlans";
 import ContactPage from "./components/ContactPage";
 import AboutPage from "./components/AboutPage";
+
 import MenteeProfile from "./components/menteeProfile";
+
+import ResponsiveAppBar from "./components/ResponsiveAppBar";
+import Footer from "./components/footer";
+import { AuthProvider } from "../src/components/AuthContext";
+
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
+      <ResponsiveAppBar/>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/mentee-profile" element={<MenteeProfile />} />
@@ -29,7 +37,9 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
       </Routes>
+      <Footer/>
     </Router>
+    </AuthProvider>
   );
 }
 

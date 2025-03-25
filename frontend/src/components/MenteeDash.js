@@ -4,12 +4,14 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
-import PrimarySearchAppBar from "../components/ResponsiveAppBar";
-<<<<<<< HEAD
-import { getAuthDetails } from "../User/auth.js";
+
+
+
+
+import { getAuthDetails } from "../User/auth";
+
 const { token, userType, userId } = getAuthDetails();
-=======
->>>>>>> 13a686b (just added the navbar for mentor & mentee)
+
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -302,47 +304,44 @@ const MentorDash = () => {
             </div>
           </>
         );
+
       case "Messaging":
         if (selectedUserId) {
           return (
             <div className="flex flex-col h-full">
+              {/* Chat Box */}
               <div
-                className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded"
+                className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded shadow-md"
+                style={{ maxHeight: "70vh" }}
                 ref={chatBoxRef}
               >
-                {messages.map((msg, index) => {
-                  // console.log(
-                  //   `Message ${index + 1}: ${msg.message} | Sender: ${
-                  //     msg.userType
-                  //   }`
-                  // );
-
-                  return (
-                    <div
-                      className={`mb-2 p-2 rounded max-w-xs ${
-                        msg.userType === "mentor"
-                          ? "bg-blue-300 text-black mr-auto" // Sender's message (left)
-                          : "bg-gray-500 text-white ml-auto" // Receiver's message (right)
-                      }`}
-                      key={msg.id}
-                    >
-                      <p>{msg.message}</p>
-                    </div>
-                  );
-                })}
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`mb-2 p-3 rounded-lg max-w-xs ${
+                      msg.userType === "mentor"
+                        ? "bg-blue-300 text-black mr-auto" // Mentor messages on left
+                        : "bg-green-500 text-white ml-auto" // Mentee messages on right
+                    }`}
+                  >
+                    <p>{msg.message}</p>
+                  </div>
+                ))}
               </div>
-              <div className="mt-4 flex">
+
+              {/* Input Box */}
+              <div className="mt-4 flex p-2 bg-white border-t shadow-md">
                 <input
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 p-2 border rounded-l"
+                  className="flex-1 p-2 border rounded-l outline-none"
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 />
                 <button
                   onClick={sendMessage}
-                  className="p-2 bg-blue-500 text-white rounded-r hover:bg-blue-600"
+                  className="p-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 transition"
                 >
                   Send
                 </button>
@@ -350,6 +349,8 @@ const MentorDash = () => {
             </div>
           );
         }
+
+        // Default view when no user is selected
         return (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
@@ -365,6 +366,7 @@ const MentorDash = () => {
             </div>
           </div>
         );
+
       case "Edit Profile":
         return (
           <div className="p-4">
@@ -499,17 +501,7 @@ const MentorDash = () => {
 
   return (
     <div className="h-screen flex flex-col">
-<<<<<<< HEAD
-      {/* Navbar at the top */}
-      <PrimarySearchAppBar />
 
-      {/* Sidebar + Main Content */}
-=======
-      {/* Navbar - Stays on top */}
-      <PrimarySearchAppBar />
-  
-      {/* Main Content - Sidebar + Page Content */}
->>>>>>> 13a686b (just added the navbar for mentor & mentee)
       <div className="flex flex-1">
         {/* Sidebar */}
         <aside
@@ -525,13 +517,7 @@ const MentorDash = () => {
           </button>
           {renderSidebarContent()}
         </aside>
-<<<<<<< HEAD
 
-        {/* Main Content */}
-=======
-  
-        {/* Page Content */}
->>>>>>> 13a686b (just added the navbar for mentor & mentee)
         <main className="flex-1 p-6">
           <button
             className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
