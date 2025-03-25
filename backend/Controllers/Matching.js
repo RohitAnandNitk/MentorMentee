@@ -1,25 +1,39 @@
 import Mentee from "../Model/MenteeSchema.js";
 import Mentor from "../Model/MentorSchema.js";
 
-export const suggestMentors = async (menteeId) => {
-  // Fetch the mentee's interests
-  const mentee = await Mentee.findById(menteeId);
-  if (!mentee) return [];
+export const suggestMentors = async (req, res) => {
+  try {
+    const menteeId = req.params.id;
 
-  // Find mentors with matching expertise
-  const mentors = await Mentor.find({
-    expertise: { $in: mentee.fieldOfInterest },
-  });
+    // Fetch the mentee's interests
+    const mentee = await Mentee.findById(menteeId);
 
-  // Sort mentors by number of matching skills
-  const sortedMentors = mentors
-    .map((mentor) => {
-      const matchCount = mentor.expertise.filter((skill) =>
-        mentee.fieldOfInterest.includes(skill)
-      ).length;
-      return { ...mentor._doc, matchCount };
-    })
-    .sort((a, b) => b.matchCount - a.matchCount);
+    // Find mentors with matching expertise
+    const mentors = await Mentor.find({
+      expertise: { $in: mentee.fieldOfInterest },
+    });
 
-  return sortedMentors;
+    // Sort mentors by number of matching skills
+    const sortedMentors = mentors
+      .map((mentor) => {
+        const matchCount = mentor.expertise.filter((skill) =>
+          mentee.fieldOfInterest.includes(skill)
+        ).length;
+        return { ...mentor._doc, matchCount };
+      })
+      .sort((a, b) => b.matchCount - a.matchCount);
+
+    console.log("sorted Mentors : ", sortedMentors);
+    res.status(200).json({
+      success: true,
+      message: "Mentee field of interest matched with mentor expertise",
+      sortedMentors,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error at Matching API",
+    });
+  }
 };
