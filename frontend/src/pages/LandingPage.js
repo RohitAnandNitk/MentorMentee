@@ -115,7 +115,10 @@ const LandingPage = () => {
               ))}
             </div>
             <div className="text-center mt-8">
-              <button className="bg-slate-600 text-white px-6 py-3 rounded">
+              <button
+                className="bg-slate-600 text-white px-6 py-3 rounded"
+                onClick={handleNavigate}
+              >
                 Explore All Mentors
               </button>
             </div>
@@ -129,7 +132,10 @@ const LandingPage = () => {
             <p className="text-lg mb-8">
               Join thousands of professionals learning with top mentors.
             </p>
-            <button className="bg-white text-slate-600 px-6 py-3 rounded">
+            <button
+              className="bg-white text-slate-600 px-6 py-3 rounded"
+              onClick={() => navigate("/signup")}
+            >
               Sign Up Now
             </button>
           </div>

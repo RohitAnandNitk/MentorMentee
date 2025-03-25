@@ -1,33 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import config from "../config.js";
+const BaseURL = config.BASE_URL;
 
 const AllMentor = () => {
   const navigate = useNavigate();
 
-  // Sample Mentor Data
-  const mentors = [
-    {
-      id: 1,
-      name: "John Doe",
-      expertise: "Web Development",
-      bio: "Passionate about teaching full-stack web development.",
-      image: "https://randomuser.me/api/portraits/men/45.jpg",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      expertise: "Data Science",
-      bio: "Helping students master AI and Machine Learning.",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-    },
-    {
-      id: 3,
-      name: "Emily Clark",
-      expertise: "UI/UX Design",
-      bio: "Creating intuitive and user-friendly designs.",
-      image: "https://randomuser.me/api/portraits/women/48.jpg",
-    },
-  ];
+  const [allMentors, setAllMentors] = useState([]);
+
+  useEffect(() => {
+    const getAllMentors = async () => {
+      try {
+        const response = await axios.get(`${BaseURL}/mentor/get-all-mentor`);
+
+        if (response.status !== 200) {
+          console.log("Error at getting all mentor data");
+          return;
+        }
+
+        console.log("All Mentors:", response.data.mentors);
+        setAllMentors(response.data.mentors);
+      } catch (error) {
+        console.error("Error fetching all mentors:", error);
+      }
+    };
+
+    getAllMentors();
+  });
 
   return (
     <>
@@ -35,8 +35,12 @@ const AllMentor = () => {
       <section id="search-bar-section" className="bg-white py-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-800">Find Your Mentor</h2>
-            <p className="text-gray-600">Search and filter mentors based on your needs.</p>
+            <h2 className="text-3xl font-bold text-gray-800">
+              Find Your Mentor
+            </h2>
+            <p className="text-gray-600">
+              Search and filter mentors based on your needs.
+            </p>
           </div>
           <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
             <input
@@ -57,14 +61,16 @@ const AllMentor = () => {
               <option value="part-time">Part-Time</option>
               <option value="weekends">Weekends</option>
             </select>
-            <button className="bg-slate-600 text-white px-6 py-2 rounded">Search</button>
+            <button className="bg-slate-600 text-white px-6 py-2 rounded">
+              Search
+            </button>
           </div>
         </div>
       </section>
 
       {/* Mentor Profiles */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-        {mentors.map((mentor) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 m-4">
+        {allMentors.map((mentor) => (
           <div
             key={mentor.id}
             className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
@@ -75,7 +81,9 @@ const AllMentor = () => {
               alt={mentor.name}
               className="w-24 h-24 rounded-full mx-auto mb-4"
             />
-            <h3 className="text-xl font-bold text-gray-800 text-center">{mentor.name}</h3>
+            <h3 className="text-xl font-bold text-gray-800 text-center">
+              {mentor.name}
+            </h3>
             <p className="text-gray-600 text-center">{mentor.expertise}</p>
             <p className="text-gray-500 text-sm text-center">"{mentor.bio}"</p>
           </div>
