@@ -11,12 +11,14 @@ import MenteeDash from "./components/MenteeDash";
 import MentorshipPlans from "./components/MentorshipPlans";
 import ContactPage from "./components/ContactPage";
 import AboutPage from "./components/AboutPage";
+import MenteeProfile from "./components/menteeProfile";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/mentee-profile" element={<MenteeProfile />} />
         <Route path="/login" element={<Login />} /> {/* Fixed path for Login */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/chat-page" element={<ChatPage />} />
