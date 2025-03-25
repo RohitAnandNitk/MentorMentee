@@ -2,10 +2,12 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import useChatbase from "./ChatBot";
+import axios from "axios";
+import config from "../config.js";
+const BaseURL = config.BASE_URL;
 
 const LandingPage = () => {
   // useChatbase();
-
   const [mentors, setMentors] = useState([]);
   const navigate = useNavigate();
 
@@ -21,44 +23,25 @@ const LandingPage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   // Fetch mentor data from the backend
-  //   fetch("/api/mentors")
-  //     .then((res) => res.json())
-  //     .then((data) => setMentors(data))
-  //     .catch((err) => console.error("Error fetching mentors:", err));
-  // }, []);
-
+  // fetch top mentors data from backend
   useEffect(() => {
-    // Temporary Sample Data
-    const sampleMentors = [
-      {
-        id: 1,
-        name: "John Doe",
-        expertise: "Web Development Expert",
-        bio: "I help developers build scalable and robust applications.",
-        image: "https://via.placeholder.com/150",
-      },
-      {
-        id: 2,
-        name: "Jane Smith",
-        expertise: "Data Science Mentor",
-        bio: "Passionate about teaching machine learning and AI concepts.",
-        image: "https://via.placeholder.com/150",
-      },
-      {
-        id: 3,
-        name: "Alice Johnson",
-        expertise: "UI/UX Designer",
-        bio: "Helping designers create user-friendly and beautiful interfaces.",
-        image: "https://via.placeholder.com/150",
-      },
-    ];
+    const getTopMentor = async () => {
+      try {
+        const response = await axios.get(`${BaseURL}/mentor/get-top-mentor`);
 
-    // Simulate API call delay
-    setTimeout(() => {
-      setMentors(sampleMentors);
-    }, 1000);
+        if (response.status !== 200) {
+          console.log("Error at getting top mentor data");
+          return;
+        }
+
+        console.log("Top three Mentors:", response.data.mentors);
+        setMentors(response.data.mentors);
+      } catch (error) {
+        console.error("Error fetching top mentors:", error);
+      }
+    };
+
+    getTopMentor();
   }, []);
 
   return (
@@ -151,36 +134,38 @@ const LandingPage = () => {
 
         {/* Sample Mentor Profiles */}
         <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {mentors.map((mentor) => (
-            <div
-              key={mentor.id}
-              className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
-              onClick={() => navigate(`/profile/${mentor.id}`)} // Navigate to mentor profile page
-            >
-              <img
-                src={mentor.image || "https://via.placeholder.com/150"}
-                alt={mentor.name}
-                className="w-24 h-24 rounded-full mx-auto mb-4"
-              />
-              <h3 className="text-xl font-bold text-gray-800 text-center">
-                {mentor.name}
-              </h3>
-              <p className="text-gray-600 text-center">{mentor.expertise}</p>
-              <p className="text-gray-500 text-sm text-center">
-                "{mentor.bio}"
-              </p>
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {mentors.map((mentor) => (
+                <div
+                  key={mentor.id}
+                  className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
+                  onClick={() => navigate(`/profile/${mentor.id}`)} // Navigate to mentor profile page
+                >
+                  <img
+                    src={mentor.image || "https://via.placeholder.com/150"}
+                    alt={mentor.name}
+                    className="w-24 h-24 rounded-full mx-auto mb-4"
+                  />
+                  <h3 className="text-xl font-bold text-gray-800 text-center">
+                    {mentor.name}
+                  </h3>
+                  <p className="text-gray-600 text-center">
+                    {mentor.expertise}
+                  </p>
+                  <p className="text-gray-500 text-sm text-center">
+                    "{mentor.bio}"
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="text-center mt-8">
-          <button className="bg-slate-600 text-white px-6 py-3 rounded">
-            Explore All Mentors
-          </button>
-        </div>
-      </div>
-    </section>
+            <div className="text-center mt-8">
+              <button className="bg-slate-600 text-white px-6 py-3 rounded">
+                Explore All Mentors
+              </button>
+            </div>
+          </div>
+        </section>
 
         {/* Call to Action */}
         <section className="bg-gray-800 py-12 text-white">
@@ -194,7 +179,6 @@ const LandingPage = () => {
             </button>
           </div>
         </section>
-
       </div>
     </>
   );

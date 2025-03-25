@@ -120,3 +120,35 @@ export const mentorDetails = async (req, res) => {
     res.status(500).json({ error: "Error in fetch mentor details API" });
   }
 };
+
+export const getAllMentors = async (req, res) => {
+  try {
+    const mentors = await Mentor.find({});
+    res.status(200).json({
+      success: true,
+      message: "All mentors data fetched successfully!",
+      mentors,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Error in fetch  all mentor  API" });
+  }
+};
+
+export const getTopMentors = async (req, res) => {
+  try {
+    const mentors = await Mentor.find({}).sort({ ratings: -1 }).limit(3);
+    res.status(200).json({
+      success: true,
+      message: "Top 3 mentors",
+      mentors,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error In Get TOP mentor API",
+      error,
+    });
+  }
+};

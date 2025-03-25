@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config.js";
-import { useAuth } from "./AuthContext";  // ✅ Move this to the top
+import { useAuth } from "./AuthContext"; // ✅ Move this to the top
 
 const BaseURL = config.BASE_URL;
 
@@ -12,7 +12,7 @@ const Login = () => {
   const [userType, setUserType] = useState("mentee");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();  // ✅ Correctly placed
+  const { login } = useAuth(); // ✅ Correctly placed
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,9 +25,9 @@ const Login = () => {
       const response = await axios.post(path, { email, password });
 
       if (response.status === 200) {
-        const { token, userName } = response.data;  // ✅ Correctly extract `data`
-        login(token, userType, userName);  // ✅ Use extracted variables
-        navigate(userType === "mentee" ? "/menteeDash" : "/mentorDash");
+        const { token, userName } = response.data; // ✅ Correctly extract `data`
+        login(token, userType, userName); // ✅ Use extracted variables
+        navigate("/");
       } else {
         setError(response.data.error || "Login failed. Please try again."); // ✅ Use response.data
       }

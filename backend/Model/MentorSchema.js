@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const MentorSchema = new mongoose.Schema(
@@ -26,9 +26,9 @@ const MentorSchema = new mongoose.Schema(
     bio: {
       type: String,
       maxlength: 500, // Short description about the mentor
-      default: ""
+      default: "",
     },
-    
+
     availability: {
       type: String, // Options: "Available", "Busy", "Not Available"
       default: "Available",
@@ -40,30 +40,24 @@ const MentorSchema = new mongoose.Schema(
     mentees: [
       {
         type: mongoose.Schema.Types.ObjectId, // Reference to Mentee IDs
-        ref: 'Mentee',
+        ref: "Mentee",
       },
     ],
     role: {
       type: String,
-      default: 'mentor', // To differentiate between user types
+      default: "mentor", // To differentiate between user types
     },
     profilePicture: {
       type: String, // URL or path to the profile picture
-      default : "",
+      default: "",
     },
     dateJoined: {
       type: Date,
       default: Date.now,
     },
     ratings: {
-      type: [
-        {
-          menteeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Mentee' },
-          rating: { type: Number, min: 1, max: 5 },
-          feedback: { type: String, maxlength: 300 },
-        },
-      ],
-      default: [],
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -71,43 +65,38 @@ const MentorSchema = new mongoose.Schema(
   }
 );
 
-// bcrypt 
-MentorSchema.pre('save' , async function(next){
+// bcrypt
+MentorSchema.pre("save", async function (next) {
   const user = this;
-  
-  // hash the password only if it has been  modified 
-  if(!user.isModified('password')) return next();
-  
-  try{
-     // hash password generation
-           const salt = await  bcrypt.genSalt(10); //complexity of salt is depend upon the vlaue of genSalt.
-           
-           // hash password
-           const hashedPassword = await  bcrypt.hash(user.password , salt);
-           
-           user.password = hashedPassword;
-           
-           next();
-       }
-       catch(err){
-           return next(err);   
-       }
-   });
-   
-   
-   
+
+  // hash the password only if it has been  modified
+  if (!user.isModified("password")) return next();
+
+  try {
+    // hash password generation
+    const salt = await bcrypt.genSalt(10); //complexity of salt is depend upon the vlaue of genSalt.
+
+    // hash password
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+
+    user.password = hashedPassword;
+
+    next();
+  } catch (err) {
+    return next(err);
+  }
+});
+
 // comparing the password
-MentorSchema.methods.comparePassword = async function(candidatePassword){
-try{
-   // use bcrypt to campare the  provided password with the hashed password
-   const isMatch = await bcrypt.compare(candidatePassword, this.password);
-   return isMatch;
-}
-catch(err){
-   throw err;
-}
+MentorSchema.methods.comparePassword = async function (candidatePassword) {
+  try {
+    // use bcrypt to campare the  provided password with the hashed password
+    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    return isMatch;
+  } catch (err) {
+    throw err;
+  }
 };
 
-
-const Mentor =  mongoose.model('Mentor', MentorSchema);
+const Mentor = mongoose.model("Mentor", MentorSchema);
 export default Mentor;
