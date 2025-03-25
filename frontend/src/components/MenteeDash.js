@@ -4,6 +4,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
+<<<<<<< HEAD
 
 
 
@@ -12,6 +13,10 @@ import { getAuthDetails } from "../User/auth";
 
 const { token, userType, userId } = getAuthDetails();
 
+=======
+import { getAuthDetails } from "../User/auth.js";
+const { token, userType, userId } = getAuthDetails();
+>>>>>>> a639b16 (draft)
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -19,7 +24,7 @@ const socket = io(BaseURL, {
   withCredentials: true,
 }); // Adjust to your backend URL
 
-const MentorDash = () => {
+const MenteeDash = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
   const [messagingUsers, setMessagingUsers] = useState(null);
@@ -502,6 +507,10 @@ const MentorDash = () => {
   return (
     <div className="h-screen flex flex-col">
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a639b16 (draft)
       <div className="flex flex-1">
         {/* Sidebar */}
         <aside
@@ -518,6 +527,10 @@ const MentorDash = () => {
           {renderSidebarContent()}
         </aside>
 
+<<<<<<< HEAD
+=======
+        {/* Main Content */}
+>>>>>>> a639b16 (draft)
         <main className="flex-1 p-6">
           <button
             className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
@@ -530,7 +543,6 @@ const MentorDash = () => {
       </div>
     </div>
   );
-  
 };
 
-export default MentorDash;
+export default MenteeDash;
