@@ -4,6 +4,8 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
+import PrimarySearchAppBar from "../components/ResponsiveAppBar";
+
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL); // Adjust to your backend URL
@@ -490,6 +492,7 @@ const MentorDash = () => {
       </div>
     </div>
   );
+  
 };
 
 export default MentorDash;

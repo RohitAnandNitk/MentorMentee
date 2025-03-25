@@ -4,8 +4,14 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
+
+
+
+
 import { getAuthDetails } from "../User/auth";
+
 const { token, userType, userId } = getAuthDetails();
+
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -495,8 +501,7 @@ const MentorDash = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Navbar at the top */}
-      {/* Sidebar + Main Content */}
+
       <div className="flex flex-1">
         {/* Sidebar */}
         <aside
@@ -513,7 +518,6 @@ const MentorDash = () => {
           {renderSidebarContent()}
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 p-6">
           <button
             className="md:hidden p-2 bg-gray-800 text-white rounded mb-4"
@@ -526,6 +530,7 @@ const MentorDash = () => {
       </div>
     </div>
   );
+  
 };
 
 export default MentorDash;
