@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Home, MessageSquare, User, ArrowLeft } from "lucide-react";
+import { Menu, X, Home, MessageSquare, User, ArrowLeft, UserRoundPen } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
+import MenteeYour from "./YourMentee.js";
 
 import { getAuthDetails } from "../User/auth.js";
 const { token, userType, userId } = getAuthDetails();
@@ -278,6 +279,16 @@ const MenteeDash = () => {
           >
             <User className="mr-2" size={18} /> Edit Profile
           </li>
+          
+          <li
+            className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
+              activeTab === "Your Profile" ? "bg-gray-700" : ""
+            }`}
+            onClick={() => handleTabClick("Your Profile")}
+          >
+            <UserRoundPen className="mr-2" size={18} /> Your Profile
+          </li>
+
         </ul>
       </>
     );
@@ -299,7 +310,10 @@ const MenteeDash = () => {
             </div>
           </>
         );
-
+        case "Your Profile":
+          return (
+          <MenteeYour/>
+          );
       case "Messaging":
         if (selectedUserId) {
           return (
