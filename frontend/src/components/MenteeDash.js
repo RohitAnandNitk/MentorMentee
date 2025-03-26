@@ -7,6 +7,7 @@ import {
   User,
   ArrowLeft,
   UserRoundPen,
+  Copy,
 } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -15,6 +16,7 @@ import config from "../config.js";
 import MenteeYour from "./YourMentee.js";
 
 import { getAuthDetails } from "../User/auth.js";
+import MentorMenteeMatching from "./MentorMenteeMatching.js";
 const { token, userType, userId } = getAuthDetails();
 
 const BaseURL = config.BASE_URL;
@@ -296,6 +298,16 @@ const MenteeDash = () => {
           >
             <UserRoundPen className="mr-2" size={18} /> Your Profile
           </li>
+
+          <li
+            className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
+              activeTab === "MentorMenteeMatching" ? "bg-gray-700" : ""
+            }`}
+            onClick={() => handleTabClick("MentorMenteeMatching")}
+          >
+            <Copy className="mr-2" size={18} /> MentorMenteeMatching
+          </li>
+          
         </ul>
       </>
     );
@@ -319,6 +331,8 @@ const MenteeDash = () => {
         );
       case "Your Profile":
         return <MenteeYour />;
+      case "MentorMenteeMatching":
+      return <MentorMenteeMatching/>;
       case "Messaging":
         if (selectedUserId) {
           return (
