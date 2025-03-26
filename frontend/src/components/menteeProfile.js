@@ -15,12 +15,12 @@ import { Rate } from "antd";
 import { MessageCircle, CalendarCheck, UserPlus } from "lucide-react";
 import axios from "axios";
 
-import { getAuthDetails } from "../User/auth";
-const { token, userType, userId } = getAuthDetails();
+import { useAuth } from "./AuthContext";
 
 const BaseURL = config.BASE_URL;
 
 const MenteeProfile = () => {
+  const { user } = useAuth();
   // console.log("user : " + userType);
   // console.log("userId : " + userId);
   // console.log("token : " + token);
@@ -30,7 +30,9 @@ const MenteeProfile = () => {
   useEffect(() => {
     try {
       const fetchUserData = async () => {
-        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        const response = await axios.get(
+          `${BaseURL}/${user.userType}/${user.userId}`
+        );
 
         // console.log("User data received : " + response.data.data);
         // console.log("name : " + response.data.data.name);
@@ -41,7 +43,7 @@ const MenteeProfile = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [userType, userType]);
+  }, [user.userType, user.userType]);
 
   const mentor = {
     name: userData?.name,

@@ -9,7 +9,7 @@ import {
   UserRoundPen,
   Handshake,
 } from "lucide-react";
-import { getAuthDetails } from "../User/auth.js";
+import { useAuth } from "./AuthContext";
 import axios from "axios";
 import { io } from "socket.io-client";
 import config from "../config.js";
@@ -18,9 +18,8 @@ import MentorRequests from "./MentorRequests.js";
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL); // Adjust to your backend URL
 
-const { token, userType, userId } = getAuthDetails();
-
 const MentorDash = () => {
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
   const [messagingUsers, setMessagingUsers] = useState(null);
@@ -39,14 +38,17 @@ const MentorDash = () => {
     // profilePicture: "",
   });
   const chatBoxRef = useRef(null);
+
   // fetch the current user data and setUserData
   useEffect(() => {
-    if (!userType || !userId) return; // Prevent execution if values are missing
+    if (!user.userType || !user.userId) return; // Prevent execution if values are missing
 
     const fetchUserData = async () => {
       try {
         console.log("Fetching user data...");
-        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        const response = await axios.get(
+          `${BaseURL}/${user.userType}/${user.userId}`
+        );
         console.log("User data received:", response.data.data);
 
         setUserData(response.data.data);
@@ -56,7 +58,7 @@ const MentorDash = () => {
     };
 
     fetchUserData();
-  }, [userType, userId]);
+  }, [user.userType, user.userId]);
   // update details
   useEffect(() => {
     if (userData) {
@@ -73,12 +75,12 @@ const MentorDash = () => {
 
   // Fetch chat history when a mentee is selected
   const fetchChatHistory = useCallback(async () => {
-    if (!selectedUserId || !userId) return;
+    if (!selectedUserId || !user.userId) return;
 
     try {
       const response = await axios.post(`${BaseURL}/chat/get-or-create-chat`, {
         menteeId: selectedUserId,
-        mentorId: userId,
+        mentorId: user.userId,
       });
       if (response.data.success) {
         setChatId(response.data.chatId);
@@ -87,7 +89,7 @@ const MentorDash = () => {
     } catch (error) {
       console.error("Error fetching chat history:", error);
     }
-  }, [selectedUserId, userId]);
+  }, [selectedUserId, user.userId]);
 
   useEffect(() => {
     fetchChatHistory();
@@ -123,13 +125,13 @@ const MentorDash = () => {
 
   // Send a message
   const sendMessage = async () => {
-    if (!message.trim() || !chatId || !userType) return;
+    if (!message.trim() || !chatId || !user.userType) return;
 
     const newMessage = {
       chatId,
-      senderId: userId,
+      senderId: user.userId,
       receiverId: selectedUserId,
-      role: userType,
+      role: user.userType,
       message,
     };
 
@@ -175,7 +177,7 @@ const MentorDash = () => {
     setActiveTab("Messaging");
     try {
       const response = await axios.get(
-        `${BaseURL}/chat/get-all-chats/${userId}`
+        `${BaseURL}/chat/get-all-chats/${user.userId}`
       );
       if (response.data.success) {
         const allChats = response.data.chats;
@@ -502,7 +504,7 @@ const MentorDash = () => {
   const updateMentorDetails = async () => {
     try {
       const response = await axios.put(
-        `${BaseURL}/${userType}/update-profile/${userId}`,
+        `${BaseURL}/${user.userType}/update-profile/${user.userId}`,
         mentorDetails // ✅ Send `mentorDetails` directly
       );
 

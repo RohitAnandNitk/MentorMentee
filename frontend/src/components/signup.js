@@ -65,7 +65,6 @@ function Signup() {
 
       if (response.status === 200) {
         console.log("Signup Successful");
-        localStorage.setItem("authToken", result.token);
         navigate("/login");
       } else {
         console.error("Signup Error:", result.error);

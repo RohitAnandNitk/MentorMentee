@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 const ResponsiveAppBar = () => {
-  const { isLoggedIn, userType, userName, logout } = useAuth();
+  const { isLoggedIn, user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -35,7 +35,7 @@ const ResponsiveAppBar = () => {
 
   const handleProfile = () => {
     setAnchorElUser(null);
-    navigate(`/${userType}-profile`);
+    navigate(`/${user.userType}-profile`);
   };
 
   const handleClose = () => {
@@ -46,19 +46,22 @@ const ResponsiveAppBar = () => {
 
   const handleDashboard = () => {
     setAnchorElUser(null);
-    console.log("user type is :", userType);
-    if (userType === "mentee") {
+    console.log("user type is :", user.userType);
+    if (user.userType === "mentee") {
       navigate("/menteeDash");
     } else {
       navigate("/mentorDash");
     }
   };
 
-  const handleLogout = () => {
-    logout(); // Call logout function from context
-    setAnchorElUser(null);
-    navigate("/");
-  };
+  // const handleLogout = () => {
+  //   try {
+  //     logout();
+  //     navigate("/"); // Redirect to hme page
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //   }
+  // };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -111,7 +114,7 @@ const ResponsiveAppBar = () => {
 
             {isLoggedIn ? (
               <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title={userName}>
+                <Tooltip title={user.userName}>
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="User Avatar"
@@ -129,19 +132,23 @@ const ResponsiveAppBar = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={() => navigate(`/${userType}-profile`)}>
+                  <MenuItem
+                    onClick={() => navigate(`/${user.userType}-profile`)}
+                  >
                     Profile
                   </MenuItem>
                   <MenuItem
                     onClick={() =>
                       navigate(
-                        userType === "mentee" ? "/menteeDash" : "/mentorDash"
+                        user.userType === "mentee"
+                          ? "/menteeDash"
+                          : "/mentorDash"
                       )
                     }
                   >
                     Dashboard
                   </MenuItem>
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
               </Box>
             ) : (
@@ -217,7 +224,7 @@ const ResponsiveAppBar = () => {
                     <MenuItem key="dashboard" onClick={handleDashboard}>
                       <Typography textAlign="center">Dashboard</Typography>
                     </MenuItem>,
-                    <MenuItem key="logout" onClick={handleLogoutClick}>
+                    <MenuItem key="logout" onClick={logout}>
                       <Typography textAlign="center">Logout</Typography>
                     </MenuItem>,
                   ]
