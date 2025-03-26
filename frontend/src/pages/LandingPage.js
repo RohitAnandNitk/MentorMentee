@@ -100,7 +100,7 @@ const LandingPage = () => {
                 <div
                   key={mentor.id}
                   className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
-                  onClick={() => navigate(`/profile/${mentor.id}`)} // Navigate to mentor profile page
+                  onClick={() => navigate(`/profile/${mentor._id}`)} // Navigate to mentor profile page
                 >
                   <img
                     src={
