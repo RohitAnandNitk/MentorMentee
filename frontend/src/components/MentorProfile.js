@@ -14,23 +14,21 @@ import {
 import { Rate } from "antd";
 import { MessageCircle, CalendarCheck, UserPlus } from "lucide-react";
 import axios from "axios";
-
-import { getAuthDetails } from "../User/auth";
-const { token, userType, userId } = getAuthDetails();
+import { useParams } from "react-router-dom";
 
 const BaseURL = config.BASE_URL;
 
 const MentorProfile = () => {
-  // console.log("user : " + userType);
-  // console.log("userId : " + userId);
-  // console.log("token : " + token);
+  const { userId } = useParams();
+  console.log("mentor card id :", userId);
+
   const [userData, setUserData] = useState(null);
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
     try {
       const fetchUserData = async () => {
-        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        const response = await axios.get(`${BaseURL}/mentor/${userId}`);
 
         // console.log("User data received : " + response.data.data);
         // console.log("name : " + response.data.data.name);
@@ -41,7 +39,7 @@ const MentorProfile = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [userType, userType]);
+  }, [userId]);
 
   const mentor = {
     name: userData?.name,
@@ -49,9 +47,8 @@ const MentorProfile = () => {
     bio: userData?.bio,
     skills: userData?.expertise ?? [],
     availability: "Available for mentoring",
-    image:
-      "https://images.unsplash.com/photo-1526835746352-0b9da4054862?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image URL
-    rating: 4.5, // Sample rating
+    image: userData?.profilePicture[0].url,
+    rating: userData?.ratings, // Sample rating
   };
 
   const mentors = [
