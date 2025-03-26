@@ -14,8 +14,7 @@ import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
 import MenteeYour from "./YourMentee.js";
 
-import { getAuthDetails } from "../User/auth.js";
-const { token, userType, userId } = getAuthDetails();
+import { useAuth } from "./AuthContext";
 
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
@@ -24,6 +23,7 @@ const socket = io(BaseURL, {
 }); // Adjust to your backend URL
 
 const MenteeDash = () => {
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
   const [messagingUsers, setMessagingUsers] = useState(null);
@@ -32,61 +32,52 @@ const MenteeDash = () => {
   const [chatId, setChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [userData, setUserData] = useState(null);
-  const [mentorDetails, setMentorDetails] = useState({
-    name: "",
-    email: "",
-    fieldOfInterest: [],
-    bio: "",
-    availability: "Available",
-    // profilePicture: "",
-  });
+  const [loading, setLoading] = useState(true);
+  const [mentorDetails, setMentorDetails] = useState(null); // Set initially to null
 
   useEffect(() => {
-    if (!userType || !userId) return; // Prevent execution if values are missing
+    if (!user.userType || !user.userId) return; // Prevent execution if values are missing
 
     const fetchUserData = async () => {
       try {
         console.log("Fetching user data...");
-        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        const response = await axios.get(
+          `${BaseURL}/${user.userType}/${user.userId}`
+        );
         console.log("User data received:", response.data.data);
+        const userData = response.data.data;
 
-        setUserData(response.data.data);
+        setMentorDetails({
+          name: userData.name || "",
+          email: userData.email || "",
+          fieldOfInterest: userData.fieldOfInterest || [],
+          bio: userData.bio || "",
+          availability: userData.availability || "Available",
+        });
+
+        setLoading(false);
       } catch (error) {
         console.log("Error fetching user data:", error);
+        setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [userType, userId]);
-
-  // Update mentorDetails when userData is set
-  useEffect(() => {
-    if (userData) {
-      setMentorDetails({
-        name: userData.name || "",
-        email: userData.email || "",
-        fieldOfInterest: userData.fieldOfInterest || [],
-        bio: userData.bio || "",
-        availability: userData.availability || "Available",
-        // profilePicture: userData.profilePicture || "",
-      });
-    }
-  }, [userData]);
+  }, [user.userType, user.userId]);
 
   const chatBoxRef = useRef(null);
   // Fetch chat history when a mentee is selected
   useEffect(() => {
-    if (selectedUserId && userId) {
+    if (selectedUserId && user.userId) {
       fetchChatHistory();
     }
-  }, [selectedUserId, userId]);
+  }, [selectedUserId, user.userId]);
 
   const fetchChatHistory = async () => {
     console.log();
     try {
       const response = await axios.post(`${BaseURL}/chat/get-or-create-chat`, {
-        menteeId: userId,
+        menteeId: user.userId,
         mentorId: selectedUserId,
       });
       if (response.data.success) {
@@ -122,13 +113,13 @@ const MenteeDash = () => {
 
   // Send a message
   const sendMessage = async () => {
-    if (!message.trim() || !chatId || !userType) return;
+    if (!message.trim() || !chatId || !user.userType) return;
 
     const newMessage = {
       chatId,
-      senderId: userId,
+      senderId: user.userId,
       receiverId: selectedUserId,
-      role: userType,
+      role: user.userType,
       message,
     };
 
@@ -172,11 +163,11 @@ const MenteeDash = () => {
   // Fetch all mentor for messaging
   const handleMessagingClick = async () => {
     setActiveTab("Messaging");
-    console.log("you are a ", userType);
-    console.log("your id ", userId);
+    console.log("you are a ", user.userType);
+    console.log("your id ", user.userId);
     try {
       const response = await axios.get(
-        `${BaseURL}/chat/get-all-chats/${userId}`
+        `${BaseURL}/chat/get-all-chats/${user.userId}`
       );
       if (response.data.success) {
         const allChats = response.data.chats;
@@ -383,72 +374,76 @@ const MenteeDash = () => {
 
       case "Edit Profile":
         return (
-          <div className="p-4">
-            <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={mentorDetails.name}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={mentorDetails.email}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Field Of Interest (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  name="fieldOfInterest"
-                  value={mentorDetails.fieldOfInterest.join(", ")}
-                  onChange={handleExpertiseChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Bio
-                </label>
-                <textarea
-                  name="bio"
-                  value={mentorDetails.bio}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Availability
-                </label>
-                <select
-                  name="availability"
-                  value={mentorDetails.availability}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                >
-                  <option value="Available">Available</option>
-                  <option value="Busy">Busy</option>
-                  <option value="Not Available">Not Available</option>
-                </select>
-              </div>
-              {/* <div>
+          <>
+            {loading ? (
+              <p>Loading ....</p>
+            ) : mentorDetails ? (
+              <div className="p-4">
+                <h2 className="text-2xl font-semibold mb-4">Edit Profile</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={mentorDetails.name}
+                      onChange={handleInputChange}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={mentorDetails.email}
+                      onChange={handleInputChange}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Field Of Interest (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="fieldOfInterest"
+                      value={mentorDetails.fieldOfInterest.join(", ")}
+                      onChange={handleExpertiseChange}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Bio
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={mentorDetails.bio}
+                      onChange={handleInputChange}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Availability
+                    </label>
+                    <select
+                      name="availability"
+                      value={mentorDetails.availability}
+                      onChange={handleInputChange}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                      <option value="Available">Available</option>
+                      <option value="Busy">Busy</option>
+                      <option value="Not Available">Not Available</option>
+                    </select>
+                  </div>
+                  {/* <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Profile Picture URL
                 </label>
@@ -460,16 +455,21 @@ const MenteeDash = () => {
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div> */}
-              <div>
-                <button
-                  type="submit"
-                  className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Update Profile
-                </button>
+                  <div>
+                    <button
+                      type="submit"
+                      className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      Update Profile
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
+            ) : (
+              <p>Loading user data</p>
+            )}
+            ;
+          </>
         );
       default:
         return null;
@@ -492,7 +492,7 @@ const MenteeDash = () => {
   const updateMenteeDetails = async () => {
     try {
       const response = await axios.put(
-        `${BaseURL}/${userType}/update-profile/${userId}`,
+        `${BaseURL}/${user.userType}/update-profile/${user.userId}`,
         mentorDetails // ✅ Send `mentorDetails` directly
       );
 

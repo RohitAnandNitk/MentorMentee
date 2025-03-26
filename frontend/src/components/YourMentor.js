@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import config from "../config.js";
-import { getAuthDetails } from "./../User/auth";
-const { userType, userId } = getAuthDetails();
+import { useAuth } from "./AuthContext";
 const BaseURL = config.BASE_URL;
 
 const MentorYour = () => {
+  const { user } = useAuth(); // Get userId and userType
   const [userData, setUserData] = useState(null);
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
     try {
       const fetchUserData = async () => {
-        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        const response = await axios.get(
+          `${BaseURL}/${user.userType}/${user.userId}`
+        );
 
         console.log(
           "User data received at yourMantee Page : " + response.data.data.name
@@ -25,7 +27,7 @@ const MentorYour = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [userType, userType]);
+  }, [user.userType, user.userType]);
 
   // Sample Mentor Data
   const mentorData = {

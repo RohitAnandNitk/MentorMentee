@@ -55,12 +55,14 @@ export const MenteeSignup = async (req, res) => {
     const response = await newUser.save();
     console.log("Data saved to DB");
 
-    // Generate token
-    const payload = { userId: response.id };
-    const token = generateToken(payload);
-    console.log("Token:", token);
+    // // Generate token
+    // const payload = { userId: response.id };
+    // const token = generateToken(payload);
+    // console.log("Token:", token);
 
-    res.status(200).json({ response, token });
+    res
+      .status(200)
+      .json({ success: true, message: "Register successfully", response });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });

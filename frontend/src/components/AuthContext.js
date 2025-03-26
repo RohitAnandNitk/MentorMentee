@@ -1,40 +1,60 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("isLoggedIn") === "true"
-  );
-  const [userType, setUserType] = useState(localStorage.getItem("userType") || "");
-  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
+  const [user, setUser] = useState({ userId: null, userType: null });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Sync state with localStorage
-    localStorage.setItem("isLoggedIn", isLoggedIn);
-    localStorage.setItem("userType", userType);
-    localStorage.setItem("userName", userName);
-  }, [isLoggedIn, userType, userName]);
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUser({
+          userId: decodedToken.userId,
+          userType: decodedToken.role,
+        });
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        logout();
+      }
+    }
+  }, []);
 
-  const login = (token, userType, userName) => {
-    localStorage.setItem("token", token);
-    setIsLoggedIn(true);
-    setUserType(userType);
-    setUserName(userName);
-  };
+  const login = useCallback((token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      setUser({
+        userId: decodedToken.userId,
+        userType: decodedToken.role,
+      });
+      setIsLoggedIn(true);
+      localStorage.setItem("token", token);
+      localStorage.setItem("isLoggedIn", "true"); // Ensure sync
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      logout();
+    }
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userType");
-    localStorage.removeItem("userName");
+    setUser(null);
     setIsLoggedIn(false);
-    setUserType("");
-    setUserName("");
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userType, userName, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

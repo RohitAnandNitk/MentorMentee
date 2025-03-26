@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config.js";
-import { useAuth } from "./AuthContext"; // ✅ Move this to the top
+import { useAuth } from "./AuthContext";
 
 const BaseURL = config.BASE_URL;
 
@@ -25,8 +25,8 @@ const Login = () => {
       const response = await axios.post(path, { email, password });
 
       if (response.status === 200) {
-        const { token, userName } = response.data; // ✅ Correctly extract `data`
-        login(token, userType, userName); // ✅ Use extracted variables
+        const { token } = response.data; // ✅ Correctly extract `data`
+        login(token); // ✅ Use extracted variables
         navigate("/");
       } else {
         setError(response.data.error || "Login failed. Please try again."); // ✅ Use response.data
