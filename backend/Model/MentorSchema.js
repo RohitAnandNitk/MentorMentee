@@ -47,10 +47,12 @@ const MentorSchema = new mongoose.Schema(
       type: String,
       default: "mentor", // To differentiate between user types
     },
-    profilePicture: {
-      type: String, // URL or path to the profile picture
-      default: "",
-    },
+    profilePicture: [
+      {
+        public_id: String,
+        url: String,
+      },
+    ],
     dateJoined: {
       type: Date,
       default: Date.now,

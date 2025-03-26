@@ -11,7 +11,7 @@ import expertiseList from "./expertiseList.js";
 const BaseURL = config.BASE_URL;
 
 function Signup() {
-  const [userType, setUserType] = useState("mentee");
+  const [userType, setUserType] = useState("mentor"); // Default to mentor
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
 
@@ -21,9 +21,9 @@ function Signup() {
       email: "",
       password: "",
       bio: "",
-      skills: [],
       availability: "Available",
-      image: null,
+      skills: [],
+      profilePicture: null, // File upload
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
@@ -35,14 +35,14 @@ function Signup() {
     }),
     onSubmit: async (values) => {
       const formData = new FormData();
-
-      Object.entries(values).forEach(([key, value]) => {
-        if (key === "skills") {
-          value.forEach((skill) => formData.append("skills", skill));
-        } else {
-          formData.append(key, value);
-        }
-      });
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("bio", values.bio);
+      formData.append("availability", values.availability);
+      formData.append("skills", values.skills.join(",")); // Convert skills array to string
+      formData.append("file", values.profilePicture); // ✅ Correct key
+      formData.append("userType", userType); // ✅ Include userType
 
       await handleSignup(formData);
     },
@@ -50,21 +50,16 @@ function Signup() {
 
   const handleSignup = async (formData) => {
     try {
-      const response = await axios.post(
-        `${BaseURL}/${userType}/signup`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data", // Ensure correct content type for FormData
-          },
-        }
-      );
+      const response = await axios.post(`${BaseURL}/mentor/signup`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      const result = response.data; // ✅ Correct way to get response data
+      const result = response.data;
       console.log("Server Response:", result);
 
       if (response.status === 200) {
-        // ✅ Correct way to check success
         console.log("Signup Successful");
         localStorage.setItem("authToken", result.token);
         navigate("/login");
@@ -86,23 +81,8 @@ function Signup() {
 
       <div className="w-1/2 p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
-        <div className="flex mb-4">
-          {["mentee", "mentor"].map((type) => (
-            <button
-              key={type}
-              className={`border p-2 rounded-md mr-2 ${
-                userType === type
-                  ? "bg-slate-600 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-              onClick={() => setUserType(type)}
-            >
-              I'm a {type.charAt(0).toUpperCase() + type.slice(1)}
-            </button>
-          ))}
-        </div>
 
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
           {["name", "email", "password", "bio"].map((field) => (
             <div key={field} className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -122,6 +102,7 @@ function Signup() {
             </div>
           ))}
 
+          {/* Profile Picture Upload */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Profile Picture
@@ -130,15 +111,17 @@ function Signup() {
               type="file"
               accept="image/*"
               className="mt-1 p-2 w-full border rounded-md"
-              onChange={(e) => formik.setFieldValue("image", e.target.files[0])}
+              onChange={(e) =>
+                formik.setFieldValue("profilePicture", e.target.files[0])
+              }
             />
           </div>
 
+          {/* Skills Autocomplete */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Skills
             </label>
-
             <Autocomplete
               disablePortal
               options={expertiseList}
@@ -152,9 +135,9 @@ function Signup() {
               }
               sx={{ width: 300 }}
               inputValue={inputValue}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue); // Update input field
-              }}
+              onInputChange={(event, newInputValue) =>
+                setInputValue(newInputValue)
+              }
               onChange={(event, newValue) => {
                 if (
                   newValue &&
@@ -165,7 +148,7 @@ function Signup() {
                     newValue.label,
                   ]);
                 }
-                setTimeout(() => setInputValue(""), 0); // 🔹 Clear input field after selection
+                setTimeout(() => setInputValue(""), 0);
               }}
               renderInput={(params) => (
                 <TextField
@@ -173,8 +156,7 @@ function Signup() {
                   label="Select a skill"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      e.preventDefault(); // Prevent form submission
-
+                      e.preventDefault();
                       const matchingSkill = expertiseList.find(
                         (skill) =>
                           skill.label.toLowerCase() === inputValue.toLowerCase()
@@ -189,8 +171,7 @@ function Signup() {
                           matchingSkill.label,
                         ]);
                       }
-
-                      setTimeout(() => setInputValue(""), 0); // 🔹 Clear input field after Enter
+                      setTimeout(() => setInputValue(""), 0);
                     }
                   }}
                 />

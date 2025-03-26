@@ -1,11 +1,13 @@
 import Mentor from "../Model/MentorSchema.js";
-
+import cloudinary from "cloudinary";
+import { getDataUri } from "../Utils/Features.js";
 import { jwtAuthMiddleware, generateToken } from "../Middleware/jwt.js";
 
 import dotenv from "dotenv";
 dotenv.config();
 
 export const MentorSignup = async (req, res) => {
+  console.log("Call for signup at backend");
   try {
     const { name, email, password, bio, availability } = req.body;
     let expertise = req.body.skills;
@@ -15,8 +17,21 @@ export const MentorSignup = async (req, res) => {
       expertise = expertise.split(",").map((skill) => skill.trim());
     }
 
-    // ✅ Extract profile picture from `req.file`
-    const image = req.file ? req.file.buffer.toString("base64") : null;
+    // validation of file
+    if (!req.file) {
+      return res.status(500).json({
+        success: false,
+        message: "please upload the product image",
+      });
+    }
+    //handle mentor image
+    console.log("hiiiii");
+    const file = getDataUri(req.file);
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+    const pic = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url,
+    };
 
     console.log("Received Data:", {
       name,
@@ -25,7 +40,6 @@ export const MentorSignup = async (req, res) => {
       bio,
       expertise,
       availability,
-      image,
     });
 
     // Create new user
@@ -36,7 +50,7 @@ export const MentorSignup = async (req, res) => {
       bio,
       availability,
       expertise,
-      image,
+      profilePicture: [pic],
     });
     const response = await newUser.save();
     // message

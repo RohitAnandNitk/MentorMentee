@@ -98,7 +98,10 @@ const LandingPage = () => {
                   onClick={() => navigate(`/profile/${mentor.id}`)} // Navigate to mentor profile page
                 >
                   <img
-                    src={mentor.image || "https://via.placeholder.com/150"}
+                    src={
+                      mentor.profilePicture[0].url ||
+                      "https://via.placeholder.com/150"
+                    }
                     alt={mentor.name}
                     className="w-24 h-24 rounded-full mx-auto mb-4"
                   />

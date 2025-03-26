@@ -8,8 +8,9 @@ import {
   getAllMentors,
   getTopMentors,
 } from "../Controllers/Mentor.js";
+import { singleUpload } from "../Middleware/multer.js";
 
-router.post("/signup", MentorSignup);
+router.post("/signup", singleUpload, MentorSignup);
 router.post("/signin", MentorSignin);
 router.get("/get-all-mentor", getAllMentors);
 router.get("/get-top-mentor", getTopMentors);
