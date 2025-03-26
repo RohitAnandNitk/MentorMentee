@@ -64,13 +64,11 @@ export const MentorSignup = async (req, res) => {
     // const token = generateToken(payload);
     // console.log("Token is : ", token);
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Register successfully",
-        response: response,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Register successfully",
+      response: response,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal server Error" });
@@ -193,7 +191,7 @@ export const updateProfile = async (req, res) => {
     }
 
     // ✅ Extract profile picture from `req.file`
-    const image = req.file ? req.file.buffer.toString("base64") : null;
+    // const image = req.file ? req.file.buffer.toString("base64") : null;
 
     // Corrected: Await the database query
     const data = await Mentor.findById(userId);
@@ -211,7 +209,7 @@ export const updateProfile = async (req, res) => {
     data.bio = bio;
     data.availability = availability;
     data.expertise = expertise;
-    data.image = image;
+    // data.image = image;
 
     // console.log("Data:", data);
     await data.save();

@@ -6,6 +6,7 @@ import {
   useCallback,
 } from "react";
 import { jwtDecode } from "jwt-decode";
+import { startTransition } from "react";
 
 const AuthContext = createContext();
 
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
@@ -25,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Invalid token:", error);
-        logout();
+        setTimeout(() => logout(), 0); // Defer logout to avoid concurrent update issues
       }
     }
   }, []);
@@ -49,8 +51,11 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("isLoggedIn");
-    setUser(null);
-    setIsLoggedIn(false);
+
+    startTransition(() => {
+      setUser(null);
+      setIsLoggedIn(false);
+    });
   }, []);
 
   return (
