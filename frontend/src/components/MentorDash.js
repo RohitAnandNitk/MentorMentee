@@ -7,12 +7,14 @@ import {
   User,
   ArrowLeft,
   UserRoundPen,
+  Handshake,
 } from "lucide-react";
 import { getAuthDetails } from "../User/auth.js";
 import axios from "axios";
 import { io } from "socket.io-client";
 import config from "../config.js";
 import MentorYour from "./YourMentor.js";
+import MentorRequests from "./MentorRequests.js";
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL); // Adjust to your backend URL
 
@@ -292,6 +294,15 @@ const MentorDash = () => {
           >
             <UserRoundPen className="mr-2" size={18} /> Your Profile
           </li>
+
+          <li
+            className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
+              activeTab === "requests" ? "bg-gray-700" : ""
+            }`}
+            onClick={() => handleTabClick("requests")}
+          >
+            <Handshake className="mr-2" size={18} /> requests
+          </li>
         </ul>
       </>
     );
@@ -315,6 +326,8 @@ const MentorDash = () => {
         );
       case "Your Profile":
         return <MentorYour />;
+        case "requests":
+        return <MentorRequests />;
       case "Messaging":
         if (selectedUserId) {
           return (
