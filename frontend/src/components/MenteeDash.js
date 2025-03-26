@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Home, MessageSquare, User, ArrowLeft, UserRoundPen } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  MessageSquare,
+  User,
+  ArrowLeft,
+  UserRoundPen,
+} from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
@@ -31,7 +39,7 @@ const MenteeDash = () => {
     fieldOfInterest: [],
     bio: "",
     availability: "Available",
-    profilePicture: "",
+    // profilePicture: "",
   });
 
   useEffect(() => {
@@ -61,7 +69,7 @@ const MenteeDash = () => {
         fieldOfInterest: userData.fieldOfInterest || [],
         bio: userData.bio || "",
         availability: userData.availability || "Available",
-        profilePicture: userData.profilePicture || "",
+        // profilePicture: userData.profilePicture || "",
       });
     }
   }, [userData]);
@@ -279,7 +287,7 @@ const MenteeDash = () => {
           >
             <User className="mr-2" size={18} /> Edit Profile
           </li>
-          
+
           <li
             className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
               activeTab === "Your Profile" ? "bg-gray-700" : ""
@@ -288,7 +296,6 @@ const MenteeDash = () => {
           >
             <UserRoundPen className="mr-2" size={18} /> Your Profile
           </li>
-
         </ul>
       </>
     );
@@ -310,10 +317,8 @@ const MenteeDash = () => {
             </div>
           </>
         );
-        case "Your Profile":
-          return (
-          <MenteeYour/>
-          );
+      case "Your Profile":
+        return <MenteeYour />;
       case "Messaging":
         if (selectedUserId) {
           return (
@@ -443,7 +448,7 @@ const MenteeDash = () => {
                   <option value="Not Available">Not Available</option>
                 </select>
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Profile Picture URL
                 </label>
@@ -454,7 +459,7 @@ const MenteeDash = () => {
                   onChange={handleInputChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
-              </div>
+              </div> */}
               <div>
                 <button
                   type="submit"

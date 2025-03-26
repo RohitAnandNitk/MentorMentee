@@ -89,7 +89,12 @@ const LandingPage = () => {
 
         {/* Sample Mentor Profiles */}
         <section className="py-16 bg-gray-50">
+          <h1 className="text-4xl font-bold text-center mx-auto mb-4">
+            Our Top Mentors
+          </h1>
+
           <div className="container mx-auto px-4">
+            {" "}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {mentors.map((mentor) => (
                 <div

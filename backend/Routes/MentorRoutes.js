@@ -7,6 +7,7 @@ import {
   mentorDetails,
   getAllMentors,
   getTopMentors,
+  updateProfile,
 } from "../Controllers/Mentor.js";
 import { singleUpload } from "../Middleware/multer.js";
 
@@ -15,5 +16,6 @@ router.post("/signin", MentorSignin);
 router.get("/get-all-mentor", getAllMentors);
 router.get("/get-top-mentor", getTopMentors);
 router.get("/:id", mentorDetails);
+router.put("/update-profile/:id", updateProfile);
 
 export default router;

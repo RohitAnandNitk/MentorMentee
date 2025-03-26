@@ -1,18 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Menu, X, Home, MessageSquare, User, ArrowLeft, UserRoundPen } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  MessageSquare,
+  User,
+  ArrowLeft,
+  UserRoundPen,
+} from "lucide-react";
+import { getAuthDetails } from "../User/auth.js";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
 import MentorYour from "./YourMentor.js";
-
-
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL); // Adjust to your backend URL
 
+const { token, userType, userId } = getAuthDetails();
+
 const MentorDash = () => {
-  const [userId, setUserId] = useState("");
-  const [userType, setUserType] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("Home");
   const [messagingUsers, setMessagingUsers] = useState(null);
@@ -21,32 +27,49 @@ const MentorDash = () => {
   const [chatId, setChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [userData, setUserData] = useState(null);
   const [mentorDetails, setMentorDetails] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    expertise: ["Web Development", "JavaScript"],
-    bio: "Experienced web developer.",
+    name: "",
+    email: "",
+    expertise: [],
+    bio: "",
     availability: "Available",
-    profilePicture: "",
+    // profilePicture: "",
   });
   const chatBoxRef = useRef(null);
-
-  // Decode token to get userId and userType
+  // fetch the current user data and setUserData
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (!userType || !userId) return; // Prevent execution if values are missing
+
+    const fetchUserData = async () => {
       try {
-        const decodedToken = jwtDecode(token);
-        setUserId(decodedToken.userId);
-        setUserType(decodedToken.role);
+        console.log("Fetching user data...");
+        const response = await axios.get(`${BaseURL}/${userType}/${userId}`);
+        console.log("User data received:", response.data.data);
+
+        setUserData(response.data.data);
       } catch (error) {
-        console.error("Invalid token:", error);
+        console.log("Error fetching user data:", error);
       }
+    };
+
+    fetchUserData();
+  }, [userType, userId]);
+  // update details
+  useEffect(() => {
+    if (userData) {
+      setMentorDetails({
+        name: userData.name || "",
+        email: userData.email || "",
+        expertise: userData.expertise || [],
+        bio: userData.bio || "",
+        availability: userData.availability || "Available",
+        // profilePicture: userData.profilePicture || "",
+      });
     }
-  }, []);
+  }, [userData]);
 
   // Fetch chat history when a mentee is selected
-
   const fetchChatHistory = useCallback(async () => {
     if (!selectedUserId || !userId) return;
 
@@ -290,10 +313,8 @@ const MentorDash = () => {
             </div>
           </>
         );
-        case "Your Profile":
-          return (
-          <MentorYour/>
-          );
+      case "Your Profile":
+        return <MentorYour />;
       case "Messaging":
         if (selectedUserId) {
           return (
@@ -423,7 +444,7 @@ const MentorDash = () => {
                   <option value="Not Available">Not Available</option>
                 </select>
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Profile Picture URL
                 </label>
@@ -434,11 +455,12 @@ const MentorDash = () => {
                   onChange={handleInputChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
-              </div>
+              </div> */}
               <div>
                 <button
                   type="submit"
                   className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  on
                 >
                   Update Profile
                 </button>
@@ -464,10 +486,28 @@ const MentorDash = () => {
     });
   };
 
+  const updateMentorDetails = async () => {
+    try {
+      const response = await axios.put(
+        `${BaseURL}/${userType}/update-profile/${userId}`,
+        mentorDetails // ✅ Send `mentorDetails` directly
+      );
+
+      if (!response.data.success) {
+        // ✅ Check `response.data.success`
+        console.log("Something went wrong at update-profile in backend");
+        return;
+      }
+
+      console.log("Profile updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error at update profile function:", error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Updated Mentor Details:", mentorDetails);
-    // Add backend update logic here if needed
+    updateMentorDetails();
   };
 
   return (
@@ -504,7 +544,6 @@ const MentorDash = () => {
       </div>
     </div>
   );
-  
 };
 
 export default MentorDash;

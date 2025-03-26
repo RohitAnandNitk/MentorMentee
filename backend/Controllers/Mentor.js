@@ -166,3 +166,62 @@ export const getTopMentors = async (req, res) => {
     });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
+    const { name, email, bio, availability } = req.body;
+    let expertise = req.body.skills;
+
+    // Ensure skills is an array (if sent as a string)
+    if (typeof expertise === "string") {
+      expertise = expertise.split(",").map((skill) => skill.trim());
+    }
+
+    // ✅ Extract profile picture from `req.file`
+    const image = req.file ? req.file.buffer.toString("base64") : null;
+
+    // Corrected: Await the database query
+    const data = await Mentor.findById(userId);
+    // If mentee not found
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentor not found",
+      });
+    }
+
+    //update info
+    data.name = name;
+    data.email = email;
+    data.bio = bio;
+    data.availability = availability;
+    data.expertise = expertise;
+    data.image = image;
+
+    // console.log("Data:", data);
+    await data.save();
+    console.log("Mentor profile updated successfully");
+
+    res.status(200).json({
+      success: true,
+      message: "Mentor profile updated successfully",
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error at update profile mentor API",
+      error,
+    });
+  }
+};

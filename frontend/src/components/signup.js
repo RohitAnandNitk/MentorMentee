@@ -11,7 +11,7 @@ import expertiseList from "./expertiseList.js";
 const BaseURL = config.BASE_URL;
 
 function Signup() {
-  const [userType, setUserType] = useState("mentor"); // Default to mentor
+  const [userType, setUserType] = useState("mentee"); // Default to mentor
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
 
@@ -50,11 +50,15 @@ function Signup() {
 
   const handleSignup = async (formData) => {
     try {
-      const response = await axios.post(`${BaseURL}/mentor/signup`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        `${BaseURL}/${userType}/signup`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       const result = response.data;
       console.log("Server Response:", result);
@@ -81,6 +85,30 @@ function Signup() {
 
       <div className="w-1/2 p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
+
+        {/* User Type Selection */}
+        <div className="flex mb-4">
+          <button
+            className={`border p-2 rounded-md mr-2 ${
+              userType === "mentee"
+                ? "bg-slate-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setUserType("mentee")}
+          >
+            I'm a Mentee
+          </button>
+          <button
+            className={`border p-2 rounded-md ${
+              userType === "mentor"
+                ? "bg-slate-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setUserType("mentor")}
+          >
+            I'm a Mentor
+          </button>
+        </div>
 
         <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
           {["name", "email", "password", "bio"].map((field) => (

@@ -1,8 +1,10 @@
 import Mentee from "../Model/MenteeSchema.js";
+import { getDataUri } from "../Utils/Features.js";
 
 import { jwtAuthMiddleware, generateToken } from "../Middleware/jwt.js";
 
 import dotenv from "dotenv";
+import cloudinary from "cloudinary";
 dotenv.config();
 
 export const MenteeSignup = async (req, res) => {
@@ -15,8 +17,21 @@ export const MenteeSignup = async (req, res) => {
       fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim());
     }
 
-    // ✅ Extract profile picture from `req.file`
-    const image = req.file ? req.file.buffer.toString("base64") : null;
+    // validation of file
+    if (!req.file) {
+      return res.status(500).json({
+        success: false,
+        message: "please upload the product image",
+      });
+    }
+    //handle mentor image
+    console.log("hiiiii");
+    const file = getDataUri(req.file);
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+    const pic = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url,
+    };
 
     console.log("Received Data:", {
       name,
@@ -25,7 +40,6 @@ export const MenteeSignup = async (req, res) => {
       bio,
       fieldOfInterest,
       availability,
-      image,
     });
 
     // Create new user
@@ -36,7 +50,7 @@ export const MenteeSignup = async (req, res) => {
       bio,
       availability,
       fieldOfInterest,
-      image,
+      profilePicture: [pic],
     });
     const response = await newUser.save();
     console.log("Data saved to DB");
@@ -106,7 +120,7 @@ export const menteeDetails = async (req, res) => {
       });
     }
 
-    // console.log("Data:", data);
+    console.log("Data:", data);
 
     res.status(200).json({
       success: true,
