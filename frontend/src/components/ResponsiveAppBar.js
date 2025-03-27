@@ -42,8 +42,6 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(null);
   };
 
-  const handleLogoutClick = () => {};
-
   const handleDashboard = () => {
     setAnchorElUser(null);
     console.log("user type is :", user.userType);
@@ -54,14 +52,14 @@ const ResponsiveAppBar = () => {
     }
   };
 
-  // const handleLogout = () => {
-  //   try {
-  //     logout();
-  //     navigate("/"); // Redirect to hme page
-  //   } catch (error) {
-  //     console.error("Logout error:", error);
-  //   }
-  // };
+  const handleLogout = () => {
+    try {
+      logout();
+      navigate("/"); // Redirect to hme page
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -148,7 +146,7 @@ const ResponsiveAppBar = () => {
                   >
                     Dashboard
                   </MenuItem>
-                  <MenuItem onClick={logout}>Logout</MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </Box>
             ) : (
@@ -224,7 +222,7 @@ const ResponsiveAppBar = () => {
                     <MenuItem key="dashboard" onClick={handleDashboard}>
                       <Typography textAlign="center">Dashboard</Typography>
                     </MenuItem>,
-                    <MenuItem key="logout" onClick={logout}>
+                    <MenuItem key="logout" onClick={handleLogout}>
                       <Typography textAlign="center">Logout</Typography>
                     </MenuItem>,
                   ]
