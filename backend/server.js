@@ -10,6 +10,7 @@ import MenteeRoute from "./Routes/MenteeRoutes.js";
 import ChatRoutes from "./Routes/ChatRoutes.js";
 import { initializeSocket } from "./Middleware/socketio.js";
 import MatchingRoutes from "./Routes/MatchingRoutes.js";
+import ContactUsRoutes from "./Routes/ContactUsRoutes.js";
 import cloudinary from "cloudinary";
 dotenv.config();
 
@@ -39,16 +40,12 @@ app.use(cors(corsOption));
 app.use(express.json()); // Parse JSON data
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form data
 
-// // ✅ Fix: Use Multer for handling file uploads
-// const storage = multer.memoryStorage(); // Store in memory (or use disk storage)
-// const upload = multer({ storage: storage });
-// app.use(upload.single("image")); // Middleware to handle file uploads
-
 // ✅ Route Setup
 app.use("/mentor", MentorRoute);
 app.use("/mentee", MenteeRoute);
 app.use("/chat", ChatRoutes);
 app.use("/suggest", MatchingRoutes);
+app.use("/contact", ContactUsRoutes);
 
 app.get("/api/chatbase-key", (req, res) => {
   res.json({ key: process.env.CHATBASE_SECRET_KEY });
