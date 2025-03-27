@@ -50,7 +50,7 @@ const MentorMenteeMatching = () => {
   }, [currentMentor]);
 
   return (
-    <div className="h-[85%] flex flex-col items-center  bg-gradient-to-r from-gray-800 via-white to-gray-800 p-6">
+    <div className="h-[85%] flex flex-col items-center  bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 p-6">
       <div className="w-full max-w-md  p-6 text-center">
         <button
           onClick={handleMatch}

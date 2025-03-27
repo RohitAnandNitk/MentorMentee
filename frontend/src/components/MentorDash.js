@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   UserRoundPen,
   Handshake,
+  Users,
 } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import axios from "axios";
@@ -15,6 +16,7 @@ import { io } from "socket.io-client";
 import config from "../config.js";
 import MentorYour from "./YourMentor.js";
 import MentorRequests from "./MentorRequests.js";
+import MentorGroups from "./MentorGroups.js";
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL); // Adjust to your backend URL
 
@@ -286,7 +288,7 @@ const MentorDash = () => {
             }`}
             onClick={() => handleTabClick("Edit Profile")}
           >
-            <User className="mr-2" size={18} /> Edit Profile
+            <UserRoundPen className="mr-2" size={18} /> Edit Profile
           </li>
           <li
             className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
@@ -294,7 +296,7 @@ const MentorDash = () => {
             }`}
             onClick={() => handleTabClick("Your Profile")}
           >
-            <UserRoundPen className="mr-2" size={18} /> Your Profile
+            <User className="mr-2" size={18} /> Your Profile
           </li>
 
           <li
@@ -304,6 +306,15 @@ const MentorDash = () => {
             onClick={() => handleTabClick("requests")}
           >
             <Handshake className="mr-2" size={18} /> requests
+          </li>
+
+          <li
+            className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
+              activeTab === "group chat" ? "bg-gray-700" : ""
+            }`}
+            onClick={() => handleTabClick("group chat")}
+          >
+            <Users className="mr-2" size={18} /> group chat
           </li>
         </ul>
       </>
@@ -326,6 +337,8 @@ const MentorDash = () => {
             </div>
           </>
         );
+        case "group chat":
+          return <MentorGroups/>;
       case "Your Profile":
         return <MentorYour />;
         case "requests":
