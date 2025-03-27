@@ -11,6 +11,7 @@ import ChatRoutes from "./Routes/ChatRoutes.js";
 import { initializeSocket } from "./Middleware/socketio.js";
 import MatchingRoutes from "./Routes/MatchingRoutes.js";
 import ContactUsRoutes from "./Routes/ContactUsRoutes.js";
+import RequestRoutes from "./Routes/RequestRoutes.js";
 import cloudinary from "cloudinary";
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use("/mentee", MenteeRoute);
 app.use("/chat", ChatRoutes);
 app.use("/suggest", MatchingRoutes);
 app.use("/contact", ContactUsRoutes);
+app.use("/request", RequestRoutes);
 
 app.get("/api/chatbase-key", (req, res) => {
   res.json({ key: process.env.CHATBASE_SECRET_KEY });
