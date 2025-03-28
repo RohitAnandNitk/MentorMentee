@@ -8,6 +8,7 @@ const BaseURL = config.BASE_URL;
 const MenteeYour = () => {
   const { user } = useAuth(); // Get userId and userType
   const [userData, setUserData] = useState(null);
+  const [mentors, setMentors] = useState([]);
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
@@ -24,7 +25,23 @@ const MenteeYour = () => {
 
         setUserData(response.data.data);
       };
+      // get your all mentors
+      const youMentors = async () => {
+        const response = await axios.get(
+          `${BaseURL}/request/accepted-request`,
+          {
+            params: {
+              userId: user.userId,
+              role: user.userType,
+            },
+          }
+        );
+        console.log("your all mentors : ", response.data.requests);
+        setMentors(response.data.requests);
+      };
+
       fetchUserData();
+      youMentors();
     } catch (error) {
       console.log(error);
     }
@@ -40,22 +57,22 @@ const MenteeYour = () => {
   };
 
   // Sample Assigned Mentors Data
-  const mentors = [
-    {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      bio: "Senior Data Scientist | 10+ years experience",
-      expertise: "Machine Learning, AI, Python",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      name: "Emma Johnson",
-      email: "emma.johnson@example.com",
-      bio: "ML Engineer | Loves teaching AI concepts",
-      expertise: "Deep Learning, TensorFlow, NLP",
-      image: "https://via.placeholder.com/150",
-    },
-  ];
+  // const mentors = [
+  //   {
+  //     name: "John Doe",
+  //     email: "john.doe@example.com",
+  //     bio: "Senior Data Scientist | 10+ years experience",
+  //     expertise: "Machine Learning, AI, Python",
+  //     image: "https://via.placeholder.com/150",
+  //   },
+  //   {
+  //     name: "Emma Johnson",
+  //     email: "emma.johnson@example.com",
+  //     bio: "ML Engineer | Loves teaching AI concepts",
+  //     expertise: "Deep Learning, TensorFlow, NLP",
+  //     image: "https://via.placeholder.com/150",
+  //   },
+  // ];
 
   return (
     <div className="h-[95%] flex justify-center items-center bg-gray-100">
@@ -111,14 +128,18 @@ const MenteeYour = () => {
                   className="flex items-center bg-gray-50 p-3 rounded-lg shadow-sm"
                 >
                   <img
-                    src={mentor.image}
-                    alt={mentor.name}
+                    src={mentor.mentorId.profilePicture[0].url}
+                    alt={mentor.mentorId.name}
                     className="w-12 h-12 rounded-full border mr-3"
                   />
                   <div className="flex-1">
-                    <h4 className="font-semibold">{mentor.name}</h4>
-                    <p className="text-xs text-gray-500">{mentor.email}</p>
-                    <p className="text-sm text-gray-600 mt-1">{mentor.bio}</p>
+                    <h4 className="font-semibold">{mentor.mentorId.name}</h4>
+                    <p className="text-xs text-gray-500">
+                      {mentor.mentorId.email}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {mentor.mentorId.bio}
+                    </p>
                   </div>
                   <button className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700">
                     View Profile

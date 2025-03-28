@@ -204,3 +204,63 @@ export const getRequestsByRole = async (req, res) => {
     });
   }
 };
+
+//those request that is accepted
+export const acceptedRequest = async (req, res) => {
+  try {
+    const { userId, role } = req.query;
+
+    // Validation
+    if (!userId || !role) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID and role are required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid User ID format" });
+    }
+
+    let requests;
+
+    if (role === "mentee") {
+      // Get requests sent by mentee
+      requests = await Request.find({
+        menteeId: userId,
+        status: "accepted",
+      }).populate("mentorId");
+    } else if (role === "mentor") {
+      // Get requests received by mentor
+      requests = await Request.find({
+        mentorId: userId,
+        status: "accepted",
+      }).populate("menteeId");
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role. Use 'mentee' or 'mentor'",
+      });
+    }
+
+    if (requests.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No requests found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Requests retrieved successfully for ${role}`,
+      requests,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving requests",
+      error: error.message,
+    });
+  }
+};

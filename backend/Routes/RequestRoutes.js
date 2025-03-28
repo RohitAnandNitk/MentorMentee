@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  acceptedRequest,
   cancelRequest,
   checkConnection,
   getRequestsByRole,
@@ -13,5 +14,6 @@ router.post("/send-request", sendRequest);
 router.put("/review-request", reviewRequest);
 router.delete("/cancel-request/:id", cancelRequest);
 router.get("/get-requests", getRequestsByRole);
+router.get("/accepted-request", acceptedRequest);
 
 export default router;
