@@ -246,13 +246,73 @@ export const acceptedRequest = async (req, res) => {
 
     if (requests.length === 0) {
       return res
-        .status(404)
-        .json({ success: false, message: "No requests found" });
+        .status(200)
+        .json({ success: true, message: "No requests found", requests });
     }
 
     res.status(200).json({
       success: true,
       message: `Requests retrieved successfully for ${role}`,
+      requests,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving requests",
+      error: error.message,
+    });
+  }
+};
+
+//those request that is pending
+export const pendingRequest = async (req, res) => {
+  try {
+    const { userId, role } = req.query;
+
+    // Validation
+    if (!userId || !role) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID and role are required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid User ID format" });
+    }
+
+    let requests;
+
+    if (role === "mentee") {
+      // Get requests sent by mentee
+      requests = await Request.find({
+        menteeId: userId,
+        status: "pending",
+      }).populate("mentorId");
+    } else if (role === "mentor") {
+      // Get requests received by mentor
+      requests = await Request.find({
+        mentorId: userId,
+        status: "pending",
+      }).populate("menteeId");
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role. Use 'mentee' or 'mentor'",
+      });
+    }
+
+    if (requests.length === 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No requests found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `pending Requests retrieved successfully for ${role}`,
       requests,
     });
   } catch (error) {

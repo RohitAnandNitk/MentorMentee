@@ -7,6 +7,7 @@ const BaseURL = config.BASE_URL;
 const MentorYour = () => {
   const { user } = useAuth(); // Get userId and userType
   const [userData, setUserData] = useState(null);
+  const [mentees, setMentees] = useState([]);
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
@@ -23,7 +24,24 @@ const MentorYour = () => {
 
         setUserData(response.data.data);
       };
+
+      // get your all mentees
+      const youMentees = async () => {
+        const response = await axios.get(
+          `${BaseURL}/request/accepted-request`,
+          {
+            params: {
+              userId: user.userId,
+              role: user.userType,
+            },
+          }
+        );
+        console.log("your all mentees : ", response.data.requests);
+        setMentees(response.data.requests);
+      };
+
       fetchUserData();
+      youMentees();
     } catch (error) {
       console.log(error);
     }
@@ -38,28 +56,6 @@ const MentorYour = () => {
     image: userData?.profilePicture[0].url,
     rating: userData?.ratings,
   };
-
-  // Sample Mentees Data
-  const mentees = [
-    {
-      name: "Alice Smith",
-      email: "alice.smith@example.com",
-      bio: "Aspiring Data Scientist | Passionate about AI",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      name: "Bob Brown",
-      email: "bob.brown@example.com",
-      bio: "Frontend Developer | Loves JavaScript",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      name: "Charlie Johnson",
-      email: "charlie.johnson@example.com",
-      bio: "Backend Engineer | Focused on APIs & Databases",
-      image: "https://via.placeholder.com/150",
-    },
-  ];
 
   return (
     <div className="h-[95%] flex justify-center items-center bg-gray-100">
@@ -117,14 +113,18 @@ const MentorYour = () => {
                   className="flex items-center bg-gray-50 p-3 rounded-lg shadow-sm"
                 >
                   <img
-                    src={mentee.image}
-                    alt={mentee.name}
+                    src={mentee.menteeId.profilePicture[0].url}
+                    alt={mentee.menteeId.name}
                     className="w-12 h-12 rounded-full border mr-3"
                   />
                   <div className="flex-1">
-                    <h4 className="font-semibold">{mentee.name}</h4>
-                    <p className="text-xs text-gray-500">{mentee.email}</p>
-                    <p className="text-sm text-gray-600 mt-1">{mentee.bio}</p>
+                    <h4 className="font-semibold">{mentee.menteeId.name}</h4>
+                    <p className="text-xs text-gray-500">
+                      {mentee.menteeId.email}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {mentee.menteeId.bio}
+                    </p>
                   </div>
                   <button className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700">
                     Message

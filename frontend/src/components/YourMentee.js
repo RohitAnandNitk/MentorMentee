@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import config from "../config.js";
 import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const BaseURL = config.BASE_URL;
 
@@ -9,6 +10,7 @@ const MenteeYour = () => {
   const { user } = useAuth(); // Get userId and userType
   const [userData, setUserData] = useState(null);
   const [mentors, setMentors] = useState([]);
+  const navigate = useNavigate();
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
@@ -141,7 +143,10 @@ const MenteeYour = () => {
                       {mentor.mentorId.bio}
                     </p>
                   </div>
-                  <button className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700">
+                  <button
+                    className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700"
+                    onClick={() => navigate(`/profile/${mentor.mentorId._id}`)}
+                  >
                     View Profile
                   </button>
                 </div>
