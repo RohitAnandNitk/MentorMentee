@@ -34,7 +34,7 @@ const corsOption = {
 };
 app.use(cors(corsOption));
 
-// Initialize Socket.IO
+// Initialize Socket.IO after cors handling..........
 initializeSocket(server);
 
 // ✅ Fix: Proper Middleware for parsing request bodies

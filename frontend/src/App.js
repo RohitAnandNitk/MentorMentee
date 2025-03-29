@@ -26,7 +26,7 @@ function App() {
         <ResponsiveAppBar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/mentee-profile" element={<MenteeProfile />} />
+          <Route path="/mentee-profile/:userId" element={<MenteeProfile />} />
           <Route path="/login" element={<Login />} />{" "}
           {/* Fixed path for Login */}
           <Route path="/signup" element={<Signup />} />

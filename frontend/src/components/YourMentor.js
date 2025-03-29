@@ -4,12 +4,14 @@ import config from "../config.js";
 import { useAuth } from "./AuthContext";
 import { Typography, Box } from "@mui/material";
 import { Rate } from "antd";
+import { useNavigate } from "react-router-dom";
 const BaseURL = config.BASE_URL;
 
 const MentorYour = () => {
   const { user } = useAuth(); // Get userId and userType
   const [userData, setUserData] = useState(null);
   const [mentees, setMentees] = useState([]);
+  const navigate = useNavigate();
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
@@ -135,8 +137,13 @@ const MentorYour = () => {
                       {mentee.menteeId.bio}
                     </p>
                   </div>
-                  <button className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700">
-                    Message
+                  <button
+                    className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700"
+                    onClick={() =>
+                      navigate(`/mentee-profile/${mentee.menteeId._id}`)
+                    }
+                  >
+                    View Profile
                   </button>
                 </div>
               ))}

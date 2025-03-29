@@ -217,7 +217,7 @@ const MentorProfile = () => {
                 onClick={() => setIsChatOpen(true)}
               >
                 <MessageCircle size={18} />
-                Message Mentor
+                Message Mentor(Not Working)
               </Button>
 
               {/* ChatBox Positioned Above the Profile Page */}
@@ -235,7 +235,7 @@ const MentorProfile = () => {
                 onClick={() => alert("Redirecting to booking system...")}
               >
                 <CalendarCheck size={18} />
-                Book Trial Session
+                Book Trial Session(Not Working)
               </Button>
 
               {/* Mentorship Request Button */}

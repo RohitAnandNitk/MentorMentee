@@ -98,7 +98,7 @@ const LandingPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {mentors.map((mentor) => (
                 <div
-                  key={mentor.id}
+                  key={mentor._id}
                   className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
                   onClick={() => navigate(`/profile/${mentor._id}`)} // Navigate to mentor profile page
                 >

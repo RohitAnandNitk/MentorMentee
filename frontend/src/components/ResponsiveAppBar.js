@@ -13,13 +13,45 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import axios from "axios";
+import config from "../config";
+const BaseURL = config.BASE_URL;
 
 const ResponsiveAppBar = () => {
   const { isLoggedIn, user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorElNav, setAnchorElNav] = useState(null);
+  const [userData, setUserData] = useState(null);
   // Load login state from localStorage when the component mounts
+
+  //get current user data
+  useEffect(() => {
+    console.log("isLoggedin : ", isLoggedIn);
+    if (isLoggedIn) {
+      console.log(
+        "We are here to fetch current user info to show the image in navbar"
+      );
+      try {
+        const fetchUserData = async () => {
+          const response = await axios.get(
+            `${BaseURL}/${user.userType}/${user.userId}`
+          );
+
+          console.log(
+            "User data received at responsive Page : " +
+              response.data.data.profilePicture
+          );
+          // console.log("name : " + response.data.data.name);
+
+          setUserData(response.data.data);
+        };
+        fetchUserData();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [isLoggedIn, user]);
 
   useEffect(() => {
     setAnchorElUser(null); // Close the menu when login state changes
@@ -115,7 +147,7 @@ const ResponsiveAppBar = () => {
                 <Tooltip title={user.userName}>
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                      alt="User Avatar"
+                      alt={userData?.profilePicture[0].url}
                       src="/static/images/avatar/2.jpg"
                       sx={{ width: 25, height: 25 }}
                     />
@@ -130,11 +162,11 @@ const ResponsiveAppBar = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleClose}
                 >
-                  <MenuItem
+                  {/* <MenuItem
                     onClick={() => navigate(`/${user.userType}-profile`)}
                   >
                     Profile
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem
                     onClick={() =>
                       navigate(
@@ -216,9 +248,9 @@ const ResponsiveAppBar = () => {
 
               {isLoggedIn
                 ? [
-                    <MenuItem key="profile" onClick={handleProfile}>
-                      <Typography textAlign="center">Profile</Typography>
-                    </MenuItem>,
+                    // <MenuItem key="profile" onClick={handleProfile}>
+                    //   <Typography textAlign="center">Profile</Typography>
+                    // </MenuItem>,
                     <MenuItem key="dashboard" onClick={handleDashboard}>
                       <Typography textAlign="center">Dashboard</Typography>
                     </MenuItem>,
