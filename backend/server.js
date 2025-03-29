@@ -27,10 +27,7 @@ const server = http.createServer(app); // HTTP server
 
 // ✅ Fix CORS issue (Methods should be an array)
 const corsOption = {
-  origin: [
-    "http://localhost:3000",
-    "https://mentor-mentee-g6h6mpycy-rohit-anands-projects-c51b03c7.vercel.app",
-  ],
+  origin: ["http://localhost:3000", "https://mentor-mentee-tau.vercel.app"],
 
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
