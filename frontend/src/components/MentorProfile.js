@@ -16,6 +16,7 @@ import { MessageCircle, CalendarCheck, UserPlus } from "lucide-react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useAuth } from "./AuthContext.js";
+import ChatBox from "./ChatBox.js";
 
 const BaseURL = config.BASE_URL;
 
@@ -25,11 +26,13 @@ const MentorProfile = () => {
   const [userData, setUserData] = useState(null);
   const [requestStatus, setRequestStatus] = useState(""); // "pending", "accepted", "none"
   const [requestId, setRequestId] = useState(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`${BaseURL}/mentor/${userId}`);
+        // console.log("mentor data :", response.data.data);
         setUserData(response.data.data);
       } catch (error) {
         console.log("Error fetching mentor data:", error);
@@ -54,7 +57,7 @@ const MentorProfile = () => {
         setRequestStatus(response.data.status);
         setRequestId(response.data.requestId);
       } catch (error) {
-        console.log("Error fetching mentor data:", error);
+        console.log("Error at check connection:", error);
       }
     };
 
@@ -98,6 +101,10 @@ const MentorProfile = () => {
     skills: userData?.expertise ?? [],
     image: userData?.profilePicture[0]?.url,
     rating: userData?.ratings,
+  };
+
+  const handleChatBox = () => {
+    console.log("Opening the chatBox with mentorId : ", userId);
   };
 
   return (
@@ -196,7 +203,7 @@ const MentorProfile = () => {
               <Typography variant="subtitle1" fontWeight="bold">
                 Rating
               </Typography>
-              <Rate allowHalf disabled defaultValue={mentor.rating} />
+              <Rate allowHalf value={mentor.rating} />
               <Typography variant="body2" color="textSecondary">
                 {mentor.rating} / 5
               </Typography>
@@ -206,11 +213,22 @@ const MentorProfile = () => {
             <Box mt={3} className="flex flex-col gap-3">
               <Button
                 className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-300 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300"
-                onClick={() => alert("Opening chat with the mentor...")}
+                variant="contained"
+                onClick={() => setIsChatOpen(true)}
               >
                 <MessageCircle size={18} />
                 Message Mentor
               </Button>
+
+              {/* ChatBox Positioned Above the Profile Page */}
+              {isChatOpen && (
+                <ChatBox
+                  personName={mentor.name}
+                  mentorId={userId}
+                  menteeId={user.userId}
+                  onClose={() => setIsChatOpen(false)}
+                />
+              )}
 
               <Button
                 className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-300 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300"

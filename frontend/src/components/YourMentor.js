@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import config from "../config.js";
 import { useAuth } from "./AuthContext";
+import { Typography, Box } from "@mui/material";
+import { Rate } from "antd";
 const BaseURL = config.BASE_URL;
 
 const MentorYour = () => {
@@ -90,9 +92,16 @@ const MentorYour = () => {
 
           {/* Rating */}
           <div className="mt-2 text-center">
-            <p className="text-yellow-500 font-semibold">
-              ⭐ {mentorData.rating} / 5
-            </p>
+            {/* Rating */}
+            <Box mt={2}>
+              <Typography variant="subtitle1" fontWeight="bold">
+                Rating
+              </Typography>
+              <Rate allowHalf value={mentorData.rating} />
+              <Typography variant="body2" color="textSecondary">
+                {mentorData.rating} / 5
+              </Typography>
+            </Box>
           </div>
         </div>
 
