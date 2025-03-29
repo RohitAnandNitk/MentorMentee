@@ -25,17 +25,17 @@ cloudinary.v2.config({
 const app = express();
 const server = http.createServer(app); // HTTP server
 
-// Initialize Socket.IO
-initializeSocket(server);
-
 // ✅ Fix CORS issue (Methods should be an array)
 const corsOption = {
-  origin: ["http://localhost:3000", "https://mentor-mentee-tau.vercel.app/"],
+  origin: ["http://localhost:3000", "https://mentor-mentee-tau.vercel.app"],
 
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 app.use(cors(corsOption));
+
+// Initialize Socket.IO
+initializeSocket(server);
 
 // ✅ Fix: Proper Middleware for parsing request bodies
 app.use(express.json()); // Parse JSON data
