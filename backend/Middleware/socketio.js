@@ -5,7 +5,10 @@ let io; // Global Socket.IO instance
 export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: ["http://localhost:3000", "https://mentor-mentee-jet.vercel.app"], // Use an array for multiple origins
+      origin: [
+        "http://localhost:3000",
+        "https://mentor-mentee-tau.vercel.app/",
+      ], // Use an array for multiple origins
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },
