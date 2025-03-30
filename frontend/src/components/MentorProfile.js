@@ -217,7 +217,7 @@ const MentorProfile = () => {
                 onClick={() => setIsChatOpen(true)}
               >
                 <MessageCircle size={18} />
-                Message Mentor(Not Working)
+                Message Mentor
               </Button>
 
               {/* ChatBox Positioned Above the Profile Page */}
