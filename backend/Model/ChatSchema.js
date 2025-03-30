@@ -23,7 +23,8 @@ const ChatSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-ChatSchema.index({ mentorId: 1, menteeId: 1 }); // Indexing for faster queries
+// Ensure only one chat exists between a mentor and mentee
+ChatSchema.index({ mentorId: 1, menteeId: 1 }, { unique: true });
 
 const Chat = mongoose.model("Chat", ChatSchema);
 export default Chat;
