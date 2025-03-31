@@ -99,6 +99,221 @@ const expertiseList = [
   { label: "Unity Game Development", category: "Technology" },
   { label: "Unreal Engine", category: "Technology" },
   { label: "Robotics", category: "Technology" },
+
+  // B.Tech in Mechanical Engineering
+  {
+    label: "Mechanical Engineering Principles",
+    category: "B.Tech in Mechanical Engineering",
+  },
+  { label: "Thermodynamics", category: "B.Tech in Mechanical Engineering" },
+  { label: "Fluid Mechanics", category: "B.Tech in Mechanical Engineering" },
+  {
+    label: "Manufacturing Processes",
+    category: "B.Tech in Mechanical Engineering",
+  },
+  {
+    label: "Strength of Materials",
+    category: "B.Tech in Mechanical Engineering",
+  },
+  { label: "Machine Design", category: "B.Tech in Mechanical Engineering" },
+
+  // B.Tech in Computer Science and Engineering
+  {
+    label: "Computer Science Fundamentals",
+    category: "B.Tech in Computer Science and Engineering",
+  },
+  {
+    label: "Data Structures & Algorithms",
+    category: "B.Tech in Computer Science and Engineering",
+  },
+  {
+    label: "Operating Systems",
+    category: "B.Tech in Computer Science and Engineering",
+  },
+  {
+    label: "Database Management Systems",
+    category: "B.Tech in Computer Science and Engineering",
+  },
+  {
+    label: "Software Engineering",
+    category: "B.Tech in Computer Science and Engineering",
+  },
+  {
+    label: "Compiler Design",
+    category: "B.Tech in Computer Science and Engineering",
+  },
+
+  // B.Tech in Civil Engineering
+  { label: "Structural Engineering", category: "B.Tech in Civil Engineering" },
+  { label: "Building Materials", category: "B.Tech in Civil Engineering" },
+  { label: "Surveying", category: "B.Tech in Civil Engineering" },
+  { label: "Fluid Mechanics (Civil)", category: "B.Tech in Civil Engineering" },
+  {
+    label: "Geotechnical Engineering",
+    category: "B.Tech in Civil Engineering",
+  },
+
+  // B.Tech in Electronics and Computer Engineering
+  {
+    label: "Electronics Circuits",
+    category: "B.Tech in Electronics and Computer Engineering",
+  },
+  {
+    label: "Microprocessors",
+    category: "B.Tech in Electronics and Computer Engineering",
+  },
+  {
+    label: "Digital Electronics",
+    category: "B.Tech in Electronics and Computer Engineering",
+  },
+  {
+    label: "Embedded Systems",
+    category: "B.Tech in Electronics and Computer Engineering",
+  },
+  {
+    label: "Computer Architecture",
+    category: "B.Tech in Electronics and Computer Engineering",
+  },
+
+  // Bachelor of Engineering in Mechanical Engineering
+  {
+    label: "Mechanical Design",
+    category: "Bachelor of Engineering in Mechanical Engineering",
+  },
+  {
+    label: "Engineering Mechanics",
+    category: "Bachelor of Engineering in Mechanical Engineering",
+  },
+  {
+    label: "Vibration Analysis",
+    category: "Bachelor of Engineering in Mechanical Engineering",
+  },
+
+  // B.Tech in Electronics and Electrical Engineering
+  {
+    label: "Electrical Circuits",
+    category: "B.Tech in Electronics and Electrical Engineering",
+  },
+  {
+    label: "Power Systems",
+    category: "B.Tech in Electronics and Electrical Engineering",
+  },
+  {
+    label: "Signal Processing",
+    category: "B.Tech in Electronics and Electrical Engineering",
+  },
+  {
+    label: "Control Systems",
+    category: "B.Tech in Electronics and Electrical Engineering",
+  },
+
+  // B.Tech in Information Technology
+  {
+    label: "Information Technology Fundamentals",
+    category: "B.Tech in Information Technology",
+  },
+  { label: "Computer Networks", category: "B.Tech in Information Technology" },
+  { label: "Web Technologies", category: "B.Tech in Information Technology" },
+
+  // Bachelor of Engineering in Computer Science and Engineering
+  {
+    label: "Software Development",
+    category: "Bachelor of Engineering in Computer Science and Engineering",
+  },
+  {
+    label: "Artificial Intelligence",
+    category: "Bachelor of Engineering in Computer Science and Engineering",
+  },
+  {
+    label: "Computer Graphics",
+    category: "Bachelor of Engineering in Computer Science and Engineering",
+  },
+
+  // B.Tech in Electrical Engineering
+  { label: "Power Electronics", category: "B.Tech in Electrical Engineering" },
+  {
+    label: "Electrical Machines",
+    category: "B.Tech in Electrical Engineering",
+  },
+  { label: "Control Systems", category: "B.Tech in Electrical Engineering" },
+
+  // B.Tech in Artificial Intelligence and Machine Learning
+  {
+    label: "Machine Learning Algorithms",
+    category: "B.Tech in Artificial Intelligence and Machine Learning",
+  },
+  {
+    label: "AI Ethics",
+    category: "B.Tech in Artificial Intelligence and Machine Learning",
+  },
+  {
+    label: "Deep Learning Architectures",
+    category: "B.Tech in Artificial Intelligence and Machine Learning",
+  },
+
+  // B.Tech in Data Sciences
+  { label: "Data Analysis", category: "B.Tech in Data Sciences" },
+  { label: "Big Data Technologies", category: "B.Tech in Data Sciences" },
+  { label: "Data Visualization", category: "B.Tech in Data Sciences" },
+  {
+    label: "Machine Learning for Data Science",
+    category: "B.Tech in Data Sciences",
+  },
+
+  // Bachelor of Engineering in Data Sciences
+  {
+    label: "Data Science Techniques",
+    category: "Bachelor of Engineering in Data Sciences",
+  },
+  {
+    label: "Data Engineering",
+    category: "Bachelor of Engineering in Data Sciences",
+  },
+  {
+    label: "Artificial Intelligence & Data Science",
+    category: "Bachelor of Engineering in Data Sciences",
+  },
+
+  // B.Tech in BioTechnology
+  { label: "Biotechnology Fundamentals", category: "B.Tech in BioTechnology" },
+  { label: "Genetic Engineering", category: "B.Tech in BioTechnology" },
+  { label: "Bioprocess Engineering", category: "B.Tech in BioTechnology" },
+
+  // B.Tech in Chemical Engineering
+  {
+    label: "Chemical Process Engineering",
+    category: "B.Tech in Chemical Engineering",
+  },
+  { label: "Heat Transfer", category: "B.Tech in Chemical Engineering" },
+  { label: "Mass Transfer", category: "B.Tech in Chemical Engineering" },
+
+  // Bachelor of Engineering in Computer Engineering
+  {
+    label: "Computer Systems",
+    category: "Bachelor of Engineering in Computer Engineering",
+  },
+  {
+    label: "Software Design & Development",
+    category: "Bachelor of Engineering in Computer Engineering",
+  },
+  {
+    label: "Network Security",
+    category: "Bachelor of Engineering in Computer Engineering",
+  },
+
+  // Bachelor of Engineering in Electronics and Telecom Engineering
+  {
+    label: "Telecommunication Systems",
+    category: "Bachelor of Engineering in Electronics and Telecom Engineering",
+  },
+  {
+    label: "Analog Electronics",
+    category: "Bachelor of Engineering in Electronics and Telecom Engineering",
+  },
+  {
+    label: "Digital Communication",
+    category: "Bachelor of Engineering in Electronics and Telecom Engineering",
+  },
 ];
 
 export default expertiseList;
