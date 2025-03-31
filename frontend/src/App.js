@@ -18,6 +18,7 @@ import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import Footer from "./components/footer";
 import { AuthProvider } from "../src/components/AuthContext";
 import AllMentor from "./components/AllMentor";
+import AllMentee from "./components/AllMentee";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/all-mentors" element={<AllMentor />} />
+          <Route path="/all-mentees" element={<AllMentee />} />
         </Routes>
         <Footer />
       </Router>

@@ -191,3 +191,17 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+
+export const getAllMentee = async (req, res) => {
+  try {
+    const mentees = await Mentee.find({});
+    res.status(200).json({
+      success: true,
+      message: "All mentees data fetched successfully!",
+      mentees,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Error in fetch  all mentee  API" });
+  }
+};

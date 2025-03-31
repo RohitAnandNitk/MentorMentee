@@ -49,7 +49,7 @@ const MenteeProfile = () => {
     name: userData?.name,
     email: userData?.email,
     bio: userData?.bio,
-    skills: userData?.expertise ?? [],
+    skills: userData?.fieldOfInterest ?? [],
     profilePicture: userData?.profilePicture[0].url,
   };
 
@@ -153,15 +153,6 @@ const MenteeProfile = () => {
                     label={skill}
                     color="secondary"
                     variant="outlined"
-                    sx={{
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        bgcolor: "#007BFF",
-                        color: "#fff",
-                        borderColor: "#007BFF",
-                        cursor: "pointer",
-                      },
-                    }}
                   />
                 ))}
               </Box>
