@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   UserRoundPen,
   Copy,
+  UsersRound,
 } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -16,6 +17,7 @@ import config from "../config.js";
 import MenteeYour from "./YourMentee.js";
 import MentorMenteeMatching from "./MentorMenteeMatching.js";
 import { useAuth } from "./AuthContext";
+import MenteeRequests from "./MenteeRequests.js";
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL, {
   transports: ["websocket", "polling"],
@@ -296,6 +298,14 @@ const MenteeDash = () => {
           >
             <Copy className="mr-2" size={18} /> MentorMenteeMatching
           </li>
+          <li
+            className={`p-2 hover:bg-gray-700 cursor-pointer flex items-center rounded ${
+              activeTab === "mentor request" ? "bg-gray-700" : ""
+            }`}
+            onClick={() => handleTabClick("mentor request")}
+          >
+            <UsersRound className="mr-2" size={18} /> mentor request
+          </li>
         </ul>
       </>
     );
@@ -317,6 +327,8 @@ const MenteeDash = () => {
             </div>
           </>
         );
+      case "mentor request":
+        return  <MenteeRequests/>
       case "Your Profile":
         return <MenteeYour />;
       case "MentorMenteeMatching":
