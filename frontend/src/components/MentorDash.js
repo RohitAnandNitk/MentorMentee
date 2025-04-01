@@ -17,6 +17,10 @@ import config from "../config.js";
 import MentorYour from "./YourMentor.js";
 import MentorRequests from "./MentorRequests.js";
 import MentorGroups from "./MentorGroups.js";
+import Select from "react-select";
+import expertiseList from "./expertiseList";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const BaseURL = config.BASE_URL;
 const socket = io(BaseURL); // Adjust to your backend URL
 
@@ -40,6 +44,15 @@ const MentorDash = () => {
     // profilePicture: "",
   });
   const chatBoxRef = useRef(null);
+  const expertiseOptions = expertiseList.map((item) => ({
+    value: item.label,
+    label: item.label,
+  }));
+
+  const toasterTest = () => {
+    toast.success('Profile updated successfully!');
+  }
+
 
   // fetch the current user data and setUserData
   useEffect(() => {
@@ -438,13 +451,16 @@ const MentorDash = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Expertise (comma-separated)
                 </label>
-                <input
-                  type="text"
-                  name="expertise"
-                  value={mentorDetails.expertise.join(", ")}
-                  onChange={handleExpertiseChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
+                <Select
+  options={expertiseOptions}
+  isMulti
+  value={mentorDetails.expertise.map((item) => ({ value: item, label: item }))}
+  onChange={handleExpertiseChange}
+  placeholder="Select or type expertise..."
+  isSearchable
+  noOptionsMessage={() => "No expertise found"}
+  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -488,12 +504,13 @@ const MentorDash = () => {
                 <button
                   type="submit"
                   className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  on
+                  onClick={toasterTest}
                 >
                   Update Profile
                 </button>
               </div>
             </form>
+            <ToastContainer />
           </div>
         );
       default:
@@ -506,12 +523,14 @@ const MentorDash = () => {
     setMentorDetails({ ...mentorDetails, [name]: value });
   };
 
-  const handleExpertiseChange = (e) => {
-    const value = e.target.value;
-    setMentorDetails({
-      ...mentorDetails,
-      expertise: value.split(",").map((item) => item.trim()),
-    });
+  const handleExpertiseChange = (selectedOptions) => {
+    const newExpertise = selectedOptions.map((option) => option.value);
+    
+    // Prevent duplicates
+    setMentorDetails((prevDetails) => ({
+      ...prevDetails,
+      expertise: newExpertise,
+    }));
   };
 
   const updateMentorDetails = async () => {
