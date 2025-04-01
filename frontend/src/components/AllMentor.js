@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config.js";
+import expertiseList from "./expertiseList";
+import Select from "react-select";
+
 const BaseURL = config.BASE_URL;
 
 const AllMentor = () => {
   const navigate = useNavigate();
-
   const [allMentors, setAllMentors] = useState([]);
+  const [selectedExpertise, setSelectedExpertise] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const getAllMentors = async () => {
@@ -29,9 +33,13 @@ const AllMentor = () => {
     getAllMentors();
   }, []);
 
+  const expertiseOptions = expertiseList.map((item) => ({
+    value: item.label,
+    label: item.label,
+  }));
+
   return (
     <>
-      {/* Search Bar Section */}
       <section id="search-bar-section" className="bg-white py-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-6">
@@ -47,14 +55,16 @@ const AllMentor = () => {
               type="text"
               placeholder="Search for a mentor..."
               className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <select className="w-full md:w-1/4 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
-              <option value="">Filter by Expertise</option>
-              <option value="web-development">Web Development</option>
-              <option value="data-science">Data Science</option>
-              <option value="design">Design</option>
-              <option value="marketing">Marketing</option>
-            </select>
+            <Select
+              options={expertiseOptions}
+              isSearchable
+              placeholder="Filter by Expertise"
+              className="w-full md:w-1/4"
+              onChange={setSelectedExpertise}
+            />
             <select className="w-full md:w-1/4 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
               <option value="">Filter by Availability</option>
               <option value="full-time">Full-Time</option>
@@ -68,13 +78,12 @@ const AllMentor = () => {
         </div>
       </section>
 
-      {/* Mentor Profiles */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 m-4">
         {allMentors.map((mentor) => (
           <div
             key={mentor._id}
             className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
-            onClick={() => navigate(`/profile/${mentor._id}`)} // Navigate to mentor profile page
+            onClick={() => navigate(`/profile/${mentor._id}`)}
           >
             <img
               src={
