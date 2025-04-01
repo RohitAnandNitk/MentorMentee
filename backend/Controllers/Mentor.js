@@ -229,3 +229,70 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+
+export const updateProfilePic = async (req, res) => {
+  console.log("User called updateProfilePic API");
+
+  try {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: "User ID is missing",
+      });
+    }
+
+    const user = await Mentor.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    console.log("User data:", user);
+
+    // Get file for update
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+    const file = getDataUri(req.file);
+
+    // Delete previous pic only if it exists
+    if (user.profilePicture && user.profilePicture.public_id) {
+      try {
+        await cloudinary.v2.uploader.destroy(user.profilePicture.public_id);
+        console.log("Previous profile picture deleted successfully");
+      } catch (error) {
+        console.error("Cloudinary deletion error:", error);
+      }
+    } else {
+      console.log("No previous profile picture found, skipping deletion.");
+    }
+
+    // Upload new pic
+    const cdb = await cloudinary.v2.uploader.upload(file.content);
+    user.profilePicture = {
+      public_id: cdb.public_id,
+      url: cdb.secure_url,
+    };
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile picture updated successfully",
+      profilePic: user.profilePic,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error at update profile pic API",
+      error,
+    });
+  }
+};
