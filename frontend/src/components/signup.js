@@ -7,6 +7,7 @@ import config from "../config.js";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import expertiseList from "./expertiseList.js";
+import img1 from "../assets/img1.png"
 
 const BaseURL = config.BASE_URL;
 
@@ -78,7 +79,7 @@ function Signup() {
     <div className="flex h-screen bg-gray-200">
       <div className="w-1/2 bg-gray-100 p-6 flex items-center justify-center">
         <Link to="/">
-          <img src="/path/to/logo.svg" alt="Logo" className="w-24 h-24" />
+          <img src={img1} alt="Logo" className="w-24 h-24" />
         </Link>
       </div>
 

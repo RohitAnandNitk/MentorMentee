@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import img1 from "../assets/img1.png"
 import config from "../config.js";
 import { useAuth } from "./AuthContext";
 
@@ -42,7 +43,7 @@ const Login = () => {
       {/* Left Side */}
       <div className="w-1/2 flex items-center justify-center bg-gray-100 p-6 rounded-lg shadow">
         <Link to="/">
-          <img src="/path/to/your/logo.svg" alt="Logo" className="w-24 h-24" />
+          <img src={img1} alt="Logo" className="w-24 h-24" />
         </Link>
       </div>
 
