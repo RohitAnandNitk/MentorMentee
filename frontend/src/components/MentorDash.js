@@ -488,6 +488,28 @@ const MentorDash = () => {
                   <option value="Not Available">Not Available</option>
                 </select>
               </div>
+              <div>
+  <label className="block text-sm font-medium text-gray-700">
+    Profile Picture
+  </label>
+  <div className="flex items-center space-x-4">
+    {mentorDetails.profilePicture && (
+      <img
+        src={mentorDetails.profilePicture}
+        alt="Profile"
+        className="w-16 h-16 rounded-full object-cover border"
+      />
+    )}
+    <input
+      type="file"
+      name="profilePicture"
+      accept="image/*"
+      onChange={handleInputChange}
+      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+    />
+  </div>
+</div>
+
               {/* <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Profile Picture URL
