@@ -1,30 +1,41 @@
 import mongoose from "mongoose";
-
-// configure the dotenv file
 import dotenv from "dotenv";
+import dns from "dns";
+
+// Force IPv4 DNS resolution first to prevent ENOTFOUND / SRV lookup issues in Node.js 18+ on Render
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder("ipv4first");
+}
+
+// Configure dotenv (local dev fallback)
 dotenv.config({ path: "./Config/.env" });
+dotenv.config();
 
-//const mongoURL = process.env.MONGODB_URL_LOCAL;
-const mongoURL = process.env.MONGODB_URL;
+const mongoURL = process.env.MONGODB_URL || process.env.MONGODB_URI;
 
-//setup mongodb connection
-mongoose.connect(mongoURL);
+if (!mongoURL) {
+  console.error("❌ CRITICAL ERROR: Neither MONGODB_URL nor MONGODB_URI environment variable is set.");
+} else {
+  // Setup MongoDB connection
+  mongoose.connect(mongoURL).catch((err) => {
+    console.error("❌ MongoDB initial connection error:", err.message);
+  });
+}
 
-// Get the default connection
-// Mongooes maintain a default connection object repersenting the MongoDB connection
+// Get default connection object
 export const db = mongoose.connection;
 
-// define event listener for databases connection
+// Event listeners
 db.on("connected", () => {
-  console.log("connected to MongoDB server");
+  console.log("✅ Connected to MongoDB server");
 });
+
 db.on("error", (err) => {
-  console.log("MongoDB connection error ", err);
+  console.log("❌ MongoDB connection error:", err);
 });
 
 db.on("disconnected", () => {
-  console.log("MongoDB disconnected");
+  console.log("⚠️ MongoDB disconnected");
 });
 
-//Export the database connection
 export default db;
