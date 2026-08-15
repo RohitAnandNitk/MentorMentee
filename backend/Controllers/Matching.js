@@ -7,10 +7,18 @@ export const suggestMentors = async (req, res) => {
 
     // Fetch the mentee's interests
     const mentee = await Mentee.findById(menteeId);
+    if (!mentee) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentee not found",
+      });
+    }
+
+    const menteeInterests = mentee.fieldOfInterest || [];
 
     // Find mentors with matching expertise
     const mentors = await Mentor.find({
-      expertise: { $in: mentee.fieldOfInterest },
+      expertise: { $in: menteeInterests },
     });
 
     // Sort mentors by number of matching skills

@@ -27,31 +27,20 @@ const ResponsiveAppBar = () => {
 
   //get current user data
   useEffect(() => {
-    console.log("isLoggedin : ", isLoggedIn);
-    if (isLoggedIn) {
-      console.log(
-        "We are here to fetch current user info to show the image in navbar"
-      );
-      try {
-        const fetchUserData = async () => {
+    if (isLoggedIn && user?.userType && user?.userId) {
+      const fetchUserData = async () => {
+        try {
           const response = await axios.get(
             `${BaseURL}/${user.userType}/${user.userId}`
           );
-
-          console.log(
-            "User data received at responsive Page : " +
-              response.data.data.profilePicture
-          );
-          // console.log("name : " + response.data.data.name);
-
           setUserData(response.data.data);
-        };
-        fetchUserData();
-      } catch (error) {
-        console.log(error);
-      }
+        } catch (error) {
+          console.log("Error fetching user data in navbar:", error);
+        }
+      };
+      fetchUserData();
     }
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user?.userType, user?.userId]);
 
   useEffect(() => {
     setAnchorElUser(null); // Close the menu when login state changes
@@ -144,12 +133,12 @@ const ResponsiveAppBar = () => {
 
             {isLoggedIn ? (
               <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title={user.userName}>
+                <Tooltip title={userData?.name || "User Profile"}>
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
-                      alt={userData?.profilePicture[0].url}
-                      src="/static/images/avatar/2.jpg"
-                      sx={{ width: 25, height: 25 }}
+                      alt={userData?.name || "User"}
+                      src={userData?.profilePicture?.[0]?.url || "/static/images/avatar/2.jpg"}
+                      sx={{ width: 32, height: 32 }}
                     />
                   </IconButton>
                 </Tooltip>

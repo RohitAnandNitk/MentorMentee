@@ -13,7 +13,7 @@ import MatchingRoutes from "./Routes/MatchingRoutes.js";
 import ContactUsRoutes from "./Routes/ContactUsRoutes.js";
 import RequestRoutes from "./Routes/RequestRoutes.js";
 import cloudinary from "cloudinary";
-dotenv.config();
+dotenv.config({ path: "./Config/.env" });
 
 //cloudinary config
 cloudinary.v2.config({

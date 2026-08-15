@@ -7,40 +7,50 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const MentorSignup = async (req, res) => {
-  console.log("Call for signup at backend");
+  console.log("Call for mentor signup at backend");
   try {
     const { name, email, password, bio, availability } = req.body;
     let expertise = req.body.skills;
 
-    // Ensure skills is an array (if sent as a string)
-    if (typeof expertise === "string") {
-      expertise = expertise.split(",").map((skill) => skill.trim());
-    }
-
-    // validation of file
-    if (!req.file) {
-      return res.status(500).json({
+    if (!name || !email || !password) {
+      return res.status(400).json({
         success: false,
-        message: "please upload the product image",
+        message: "Name, email, and password are required",
       });
     }
-    //handle mentor image
-    console.log("hiiiii");
-    const file = getDataUri(req.file);
-    const cdb = await cloudinary.v2.uploader.upload(file.content);
-    const pic = {
-      public_id: cdb.public_id,
-      url: cdb.secure_url,
+
+    // Check duplicate user
+    const existingMentor = await Mentor.findOne({ email: email.toLowerCase() });
+    if (existingMentor) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is already registered as a mentor",
+      });
+    }
+
+    // Ensure skills is an array (if sent as a string)
+    if (typeof expertise === "string") {
+      expertise = expertise.split(",").map((skill) => skill.trim()).filter(Boolean);
+    }
+
+    let pic = {
+      public_id: "",
+      url: "https://via.placeholder.com/150",
     };
 
-    console.log("Received Data:", {
-      name,
-      email,
-      password,
-      bio,
-      expertise,
-      availability,
-    });
+    // handle image upload if provided
+    if (req.file) {
+      try {
+        const file = getDataUri(req.file);
+        const cdb = await cloudinary.v2.uploader.upload(file.content);
+        pic = {
+          public_id: cdb.public_id,
+          url: cdb.secure_url,
+        };
+      } catch (uploadErr) {
+        console.error("Cloudinary upload failed, using fallback picture:", uploadErr.message);
+      }
+    }
 
     // Create new user
     const newUser = new Mentor({
@@ -48,21 +58,12 @@ export const MentorSignup = async (req, res) => {
       email,
       password,
       bio,
-      availability,
-      expertise,
+      availability: availability || "Available",
+      expertise: expertise || [],
       profilePicture: [pic],
     });
     const response = await newUser.save();
-    // message
-    console.log("data saved");
-
-    // const payload = {
-    //   userId: response.id,
-    // };
-    // // console the payload
-    // console.log(JSON.stringify(payload));
-    // const token = generateToken(payload);
-    // console.log("Token is : ", token);
+    console.log("Mentor data saved successfully");
 
     res.status(200).json({
       success: true,
@@ -70,8 +71,11 @@ export const MentorSignup = async (req, res) => {
       response: response,
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Internal server Error" });
+    console.error("Error in MentorSignup:", err);
+    res.status(400).json({
+      success: false,
+      message: err.message || "Error during mentor signup",
+    });
   }
 };
 
@@ -262,9 +266,10 @@ export const updateProfilePic = async (req, res) => {
     const file = getDataUri(req.file);
 
     // Delete previous pic only if it exists
-    if (user.profilePicture && user.profilePicture.public_id) {
+    const prevPublicId = Array.isArray(user.profilePicture) ? user.profilePicture[0]?.public_id : user.profilePicture?.public_id;
+    if (prevPublicId) {
       try {
-        await cloudinary.v2.uploader.destroy(user.profilePicture.public_id);
+        await cloudinary.v2.uploader.destroy(prevPublicId);
         console.log("Previous profile picture deleted successfully");
       } catch (error) {
         console.error("Cloudinary deletion error:", error);
@@ -275,17 +280,17 @@ export const updateProfilePic = async (req, res) => {
 
     // Upload new pic
     const cdb = await cloudinary.v2.uploader.upload(file.content);
-    user.profilePicture = {
+    user.profilePicture = [{
       public_id: cdb.public_id,
       url: cdb.secure_url,
-    };
+    }];
 
     await user.save();
 
     res.status(200).json({
       success: true,
       message: "Profile picture updated successfully",
-      profilePic: user.profilePic,
+      profilePicture: user.profilePicture,
     });
   } catch (error) {
     console.error(error);

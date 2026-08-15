@@ -15,22 +15,21 @@ const MentorYour = () => {
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
-    try {
-      const fetchUserData = async () => {
+    if (!user?.userType || !user?.userId) return;
+
+    const fetchUserData = async () => {
+      try {
         const response = await axios.get(
           `${BaseURL}/${user.userType}/${user.userId}`
         );
-
-        console.log(
-          "User data received at yourMantee Page : " + response.data.data.name
-        );
-        // console.log("name : " + response.data.data.name);
-
         setUserData(response.data.data);
-      };
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+      }
+    };
 
-      // get your all mentees
-      const youMentees = async () => {
+    const youMentees = async () => {
+      try {
         const response = await axios.get(
           `${BaseURL}/request/accepted-request`,
           {
@@ -40,25 +39,24 @@ const MentorYour = () => {
             },
           }
         );
-        console.log("your all mentees : ", response.data.requests);
-        setMentees(response.data.requests);
-      };
+        setMentees(response.data.requests || []);
+      } catch (error) {
+        console.log("Error fetching mentees:", error);
+      }
+    };
 
-      fetchUserData();
-      youMentees();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [user.userType, user.userType]);
+    fetchUserData();
+    youMentees();
+  }, [user?.userType, user?.userId]);
 
   // Sample Mentor Data
   const mentorData = {
     name: userData?.name,
     email: userData?.email,
     bio: userData?.bio,
-    skills: userData?.fieldOfInterest || [],
-    image: userData?.profilePicture[0].url,
-    rating: userData?.ratings,
+    skills: userData?.expertise || userData?.fieldOfInterest || [],
+    image: userData?.profilePicture?.[0]?.url || "https://via.placeholder.com/150",
+    rating: userData?.ratings || 0,
   };
 
   return (
@@ -70,8 +68,8 @@ const MentorYour = () => {
           <div className="flex flex-col items-center">
             <img
               src={mentorData.image}
-              alt={mentorData.name}
-              className="w-24 h-24 rounded-full border-4 border-gray-200"
+              alt={mentorData.name || "Mentor"}
+              className="w-24 h-24 rounded-full border-4 border-gray-200 object-cover"
             />
             <h2 className="text-xl font-bold mt-2">{mentorData.name}</h2>
             <p className="text-gray-500">{mentorData.email}</p>
@@ -94,7 +92,6 @@ const MentorYour = () => {
 
           {/* Rating */}
           <div className="mt-2 text-center">
-            {/* Rating */}
             <Box mt={2}>
               <Typography variant="subtitle1" fontWeight="bold">
                 Rating
@@ -124,23 +121,23 @@ const MentorYour = () => {
                   className="flex items-center bg-gray-50 p-3 rounded-lg shadow-sm"
                 >
                   <img
-                    src={mentee.menteeId.profilePicture[0].url}
-                    alt={mentee.menteeId.name}
-                    className="w-12 h-12 rounded-full border mr-3"
+                    src={mentee.menteeId?.profilePicture?.[0]?.url || "https://via.placeholder.com/150"}
+                    alt={mentee.menteeId?.name || "Mentee"}
+                    className="w-12 h-12 rounded-full border mr-3 object-cover"
                   />
                   <div className="flex-1">
-                    <h4 className="font-semibold">{mentee.menteeId.name}</h4>
+                    <h4 className="font-semibold">{mentee.menteeId?.name}</h4>
                     <p className="text-xs text-gray-500">
-                      {mentee.menteeId.email}
+                      {mentee.menteeId?.email}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
-                      {mentee.menteeId.bio}
+                      {mentee.menteeId?.bio}
                     </p>
                   </div>
                   <button
                     className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700"
                     onClick={() =>
-                      navigate(`/mentee-profile/${mentee.menteeId._id}`)
+                      mentee.menteeId?._id && navigate(`/mentee-profile/${mentee.menteeId._id}`)
                     }
                   >
                     View Profile

@@ -56,7 +56,7 @@ const MentorDash = () => {
 
   // fetch the current user data and setUserData
   useEffect(() => {
-    if (!user.userType || !user.userId) return; // Prevent execution if values are missing
+    if (!user?.userType || !user?.userId) return; // Prevent execution if values are missing
 
     const fetchUserData = async () => {
       try {
@@ -73,7 +73,7 @@ const MentorDash = () => {
     };
 
     fetchUserData();
-  }, [user.userType, user.userId]);
+  }, [user?.userType, user?.userId]);
   // update details
   useEffect(() => {
     if (userData) {

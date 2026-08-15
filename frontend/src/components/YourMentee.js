@@ -14,21 +14,21 @@ const MenteeYour = () => {
 
   // Sample mentor data (Replace with API response)
   useEffect(() => {
-    try {
-      const fetchUserData = async () => {
+    if (!user?.userType || !user?.userId) return;
+
+    const fetchUserData = async () => {
+      try {
         const response = await axios.get(
           `${BaseURL}/${user.userType}/${user.userId}`
         );
-
-        console.log(
-          "User data received at yourMantee Page : " + response.data.data.name
-        );
-        // console.log("name : " + response.data.data.name);
-
         setUserData(response.data.data);
-      };
-      // get your all mentors
-      const youMentors = async () => {
+      } catch (error) {
+        console.log("Error fetching user data:", error);
+      }
+    };
+
+    const youMentors = async () => {
+      try {
         const response = await axios.get(
           `${BaseURL}/request/accepted-request`,
           {
@@ -38,16 +38,15 @@ const MenteeYour = () => {
             },
           }
         );
-        console.log("your all mentors : ", response.data.requests);
-        setMentors(response.data.requests);
-      };
+        setMentors(response.data.requests || []);
+      } catch (error) {
+        console.log("Error fetching mentors:", error);
+      }
+    };
 
-      fetchUserData();
-      youMentors();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [user.userType, user.userType]);
+    fetchUserData();
+    youMentors();
+  }, [user?.userType, user?.userId]);
 
   // Sample Mentee Data
   const menteeData = {
@@ -55,26 +54,8 @@ const MenteeYour = () => {
     email: userData?.email,
     bio: userData?.bio,
     interests: userData?.fieldOfInterest || [],
-    image: userData?.profilePicture[0].url,
+    image: userData?.profilePicture?.[0]?.url || "https://via.placeholder.com/150",
   };
-
-  // Sample Assigned Mentors Data
-  // const mentors = [
-  //   {
-  //     name: "John Doe",
-  //     email: "john.doe@example.com",
-  //     bio: "Senior Data Scientist | 10+ years experience",
-  //     expertise: "Machine Learning, AI, Python",
-  //     image: "https://via.placeholder.com/150",
-  //   },
-  //   {
-  //     name: "Emma Johnson",
-  //     email: "emma.johnson@example.com",
-  //     bio: "ML Engineer | Loves teaching AI concepts",
-  //     expertise: "Deep Learning, TensorFlow, NLP",
-  //     image: "https://via.placeholder.com/150",
-  //   },
-  // ];
 
   return (
     <div className="h-[95%] flex justify-center items-center bg-gray-100">
@@ -85,8 +66,8 @@ const MenteeYour = () => {
           <div className="flex flex-col items-center">
             <img
               src={menteeData.image}
-              alt={menteeData.name}
-              className="w-24 h-24 rounded-full border-4 border-gray-200"
+              alt={menteeData.name || "Mentee"}
+              className="w-24 h-24 rounded-full border-4 border-gray-200 object-cover"
             />
             <h2 className="text-xl font-bold mt-2">{menteeData.name}</h2>
             <p className="text-gray-500">{menteeData.email}</p>
@@ -106,13 +87,6 @@ const MenteeYour = () => {
               </span>
             ))}
           </div>
-
-          {/* Level */}
-          <div className="mt-2 text-center">
-            <p className="text-blue-500 font-semibold">
-              📘 {menteeData.level} Level
-            </p>
-          </div>
         </div>
 
         {/* Scrollable Mentors Section */}
@@ -130,22 +104,22 @@ const MenteeYour = () => {
                   className="flex items-center bg-gray-50 p-3 rounded-lg shadow-sm"
                 >
                   <img
-                    src={mentor.mentorId.profilePicture[0].url}
-                    alt={mentor.mentorId.name}
-                    className="w-12 h-12 rounded-full border mr-3"
+                    src={mentor.mentorId?.profilePicture?.[0]?.url || "https://via.placeholder.com/150"}
+                    alt={mentor.mentorId?.name || "Mentor"}
+                    className="w-12 h-12 rounded-full border mr-3 object-cover"
                   />
                   <div className="flex-1">
-                    <h4 className="font-semibold">{mentor.mentorId.name}</h4>
+                    <h4 className="font-semibold">{mentor.mentorId?.name}</h4>
                     <p className="text-xs text-gray-500">
-                      {mentor.mentorId.email}
+                      {mentor.mentorId?.email}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
-                      {mentor.mentorId.bio}
+                      {mentor.mentorId?.bio}
                     </p>
                   </div>
                   <button
                     className="bg-blue-600 text-white px-3 py-1 text-xs rounded hover:bg-blue-700"
-                    onClick={() => navigate(`/profile/${mentor.mentorId._id}`)}
+                    onClick={() => mentor.mentorId?._id && navigate(`/profile/${mentor.mentorId._id}`)}
                   >
                     View Profile
                   </button>

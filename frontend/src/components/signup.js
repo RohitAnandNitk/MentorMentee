@@ -11,7 +11,8 @@ import expertiseList from "./expertiseList.js";
 const BaseURL = config.BASE_URL;
 
 function Signup() {
-  const [userType, setUserType] = useState("mentee"); // Default to mentor
+  const [userType, setUserType] = useState("mentee"); // Default to mentee
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
 
@@ -40,9 +41,11 @@ function Signup() {
       formData.append("password", values.password);
       formData.append("bio", values.bio);
       formData.append("availability", values.availability);
-      formData.append("skills", values.skills.join(",")); // Convert skills array to string
-      formData.append("file", values.profilePicture); // ✅ Correct key
-      formData.append("userType", userType); // ✅ Include userType
+      formData.append("skills", values.skills.join(","));
+      if (values.profilePicture instanceof File) {
+        formData.append("file", values.profilePicture);
+      }
+      formData.append("userType", userType);
 
       await handleSignup(formData);
     },
@@ -50,6 +53,7 @@ function Signup() {
 
   const handleSignup = async (formData) => {
     try {
+      setError("");
       const response = await axios.post(
         `${BaseURL}/${userType}/signup`,
         formData,
@@ -63,14 +67,19 @@ function Signup() {
       const result = response.data;
       console.log("Server Response:", result);
 
-      if (response.status === 200) {
+      if (response.status === 200 && result.success !== false) {
         console.log("Signup Successful");
         navigate("/login");
       } else {
-        console.error("Signup Error:", result.error);
+        setError(result.message || result.error || "Signup failed");
       }
     } catch (error) {
-      console.error("Network Error:", error);
+      console.error("Signup Error:", error);
+      setError(
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Something went wrong during signup."
+      );
     }
   };
 
@@ -227,6 +236,10 @@ function Signup() {
               ))}
             </div>
           </div>
+
+          {error && (
+            <p className="text-red-500 text-sm mb-4 font-semibold">{error}</p>
+          )}
 
           <button
             type="submit"

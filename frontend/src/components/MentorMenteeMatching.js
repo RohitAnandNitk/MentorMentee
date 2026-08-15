@@ -15,24 +15,23 @@ const MentorMenteeMatching = () => {
   const cardRef = useRef(null);
 
   useEffect(() => {
+    if (!user?.userId) return;
     const getMatchedMentors = async () => {
       try {
         const response = await axios.get(
           `${BaseURL}/suggest/matching-mentor/${user.userId}`
         );
-        console.log(response);
         if (!response.data.success) {
           console.log("Error at matching function at backend!");
           return;
         }
-        console.log(response.data.sortedMentors);
-        setMentorList(response.data.sortedMentors);
+        setMentorList(response.data.sortedMentors || []);
       } catch (error) {
         console.log("Error at fetching matching mentors : ", error);
       }
     };
     getMatchedMentors();
-  }, [user]);
+  }, [user?.userId]);
 
   const handleMatch = () => {
     const randomMentor =
@@ -81,9 +80,9 @@ const MentorMenteeMatching = () => {
           >
             {/* Profile Image */}
             <img
-              src={currentMentor.profilePicture[0].url}
-              alt={currentMentor.name}
-              className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md mb-4"
+              src={currentMentor.profilePicture?.[0]?.url || "https://via.placeholder.com/150"}
+              alt={currentMentor.name || "Mentor"}
+              className="w-32 h-32 rounded-full border-4 border-blue-500 shadow-md mb-4 object-cover"
             />
 
             {/* Mentor Name & Bio */}

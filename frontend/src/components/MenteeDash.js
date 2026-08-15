@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { jwtDecode } from "jwt-decode";
 import config from "../config.js";
 import MenteeYour from "./YourMentee.js";
 import MentorMenteeMatching from "./MentorMenteeMatching.js";
@@ -38,7 +37,7 @@ const MenteeDash = () => {
   const [mentorDetails, setMentorDetails] = useState(null); // Set initially to null
 
   useEffect(() => {
-    if (!user.userType || !user.userId) return; // Prevent execution if values are missing
+    if (!user?.userType || !user?.userId) return; // Prevent execution if values are missing
 
     const fetchUserData = async () => {
       try {
@@ -65,7 +64,7 @@ const MenteeDash = () => {
     };
 
     fetchUserData();
-  }, [user.userType, user.userId]);
+  }, [user?.userType, user?.userId]);
 
   const chatBoxRef = useRef(null);
   // Fetch chat history when a mentee is selected
@@ -506,9 +505,11 @@ const MenteeDash = () => {
 
   const handleExpertiseChange = (e) => {
     const value = e.target.value;
+    const list = value.split(",").map((item) => item.trim());
     setMentorDetails({
       ...mentorDetails,
-      expertise: value.split(",").map((item) => item.trim()),
+      fieldOfInterest: list,
+      skills: list,
     });
   };
 

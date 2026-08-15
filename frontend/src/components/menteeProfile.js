@@ -6,16 +6,11 @@ import {
   CardMedia,
   Typography,
   Chip,
-  Button,
   Box,
   Container,
-  Grid,
 } from "@mui/material";
-import { Rate } from "antd";
-import { MessageCircle, CalendarCheck, UserPlus } from "lucide-react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useAuth } from "./AuthContext";
 
 const BaseURL = config.BASE_URL;
 
@@ -50,7 +45,7 @@ const MenteeProfile = () => {
     email: userData?.email,
     bio: userData?.bio,
     skills: userData?.fieldOfInterest ?? [],
-    profilePicture: userData?.profilePicture[0].url,
+    profilePicture: userData?.profilePicture?.[0]?.url || "https://via.placeholder.com/150",
   };
 
   return (

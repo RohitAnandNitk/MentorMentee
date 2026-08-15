@@ -22,11 +22,9 @@ const MentorRequests = () => {
     getPendingRequest();
   }, [user]);
 
-  const handleAccept = async (requestId, menteeId) => {
-    console.log(
-      "mentee requestId whose request i going to accept : ",
-      requestId
-    );
+  const handleAccept = async (requestId, menteeIdParam) => {
+    const menteeId = typeof menteeIdParam === "object" ? menteeIdParam._id : menteeIdParam;
+    console.log("mentee requestId being accepted:", requestId);
     try {
       // accept the request
       const response1 = await axios.put(`${BaseURL}/request/review-request`, {
@@ -36,15 +34,14 @@ const MentorRequests = () => {
       console.log("Request has been accepted", response1);
       // create the chat btw them
       const response2 = await axios.post(`${BaseURL}/chat/get-or-create-chat`, {
-        mentorId: user.userId,
+        mentorId: user?.userId,
         menteeId,
       });
       console.log("New chat created btw you with this mentee ", response2);
 
       getPendingRequest();
     } catch (error) {
-      console.log("Error :", error);
-      console.log("Error at calling the accept request at mentorRequeat page");
+      console.log("Error accepting request:", error);
     }
   };
 
@@ -59,7 +56,7 @@ const MentorRequests = () => {
         getPendingRequest();
       }
     } catch (error) {
-      console.log("Error rejeecting request:", error);
+      console.log("Error rejecting request:", error);
     }
   };
 
@@ -70,27 +67,30 @@ const MentorRequests = () => {
         {pendingRequests.length === 0 ? (
           <p className="text-gray-500 text-center">No pending requests.</p>
         ) : (
-          pendingRequests.map((request) => (
-            <div
-              key={request.menteeId._id}
-              className="border-b last:border-b-0 pb-4 mb-4"
-            >
-              <h3 className="font-semibold text-lg">{request.menteeId.name}</h3>
-              <p className="text-sm text-gray-600">{request.menteeId.email}</p>
-              <button
-                className="mt-3 ml-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                onClick={() => handleAccept(request._id, request.menteeId)}
+          pendingRequests.map((request) => {
+            const mentee = request.menteeId;
+            return (
+              <div
+                key={request._id}
+                className="border-b last:border-b-0 pb-4 mb-4"
               >
-                Accept
-              </button>
-              <button
-                className="mt-3 ml-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                onClick={() => handleRejectRequest(request._id)}
-              >
-                Reject
-              </button>
-            </div>
-          ))
+                <h3 className="font-semibold text-lg">{mentee?.name || "Mentee"}</h3>
+                <p className="text-sm text-gray-600">{mentee?.email || ""}</p>
+                <button
+                  className="mt-3 ml-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  onClick={() => handleAccept(request._id, mentee?._id || mentee)}
+                >
+                  Accept
+                </button>
+                <button
+                  className="mt-3 ml-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  onClick={() => handleRejectRequest(request._id)}
+                >
+                  Reject
+                </button>
+              </div>
+            );
+          })
         )}
       </div>
     </div>

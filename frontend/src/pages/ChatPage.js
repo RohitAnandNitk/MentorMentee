@@ -1,183 +1,205 @@
-// import { useEffect, useState, useRef } from "react";
-// import axios from "axios";
-// import { io } from "socket.io-client";
-// import { jwtDecode } from "jwt-decode"; // Import jwt-decode
-// import "./ChatPage.css"; // Import CSS file
+import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import { io } from "socket.io-client";
+import { useAuth } from "../components/AuthContext";
+import config from "../config.js";
+import "./ChatPage.css";
 
-// const socket = io("http://localhost:4000"); // Connect to backend
+const BaseURL = config.BASE_URL;
 
-// const ChatPage = () => {
-//   const menteeId = "679b31262ddd4d4d9ba3b1eb";
-//   const mentorId = "679676affaea7b0ba3134295";
-//   const [userId, setUserId] = useState("");
-//   const [messages, setMessages] = useState([]);
-//   const [message, setMessage] = useState("");
-//   const [chatId, setChatId] = useState(null);
-//   const [userType, setUserType] = useState(null); // Store userType from token
+const ChatPage = () => {
+  const { user, isLoggedIn } = useAuth();
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [chatId, setChatId] = useState(null);
+  const [chats, setChats] = useState([]);
+  const [activeChat, setActiveChat] = useState(null);
+  const chatBoxRef = useRef(null);
 
-//   const [chats, setChats] = useState([]);
+  const socketRef = useRef(null);
 
-//   // hard coded
-//   const buyerId = "c3185ff0-fabd-415f-ab11-3459cc147538";
-//   const sellerId = "ed784258-a737-4157-b0a9-08225b7c7c30";
+  useEffect(() => {
+    socketRef.current = io(BaseURL, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+    });
 
-//   // Extract userType from Token
-//   useEffect(() => {
-//     const token = localStorage.getItem("token"); // Get token from localStorage
-//     if (token) {
-//       try {
-//         const decodedToken = jwtDecode(token);
-//         setUserId(decodedToken.userId);
-//         setUserType(decodedToken.role); // Set userType from token
-//       } catch (error) {
-//         console.error("Invalid token:", error);
-//       }
-//     }
-//   }, []);
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, []);
 
-//   useEffect(() => {
-//     if (menteeId && mentorId) {
-//       fetchAllChats();
-//       fetchChatHistory();
-//     }
-//   }, [menteeId, mentorId]);
+  useEffect(() => {
+    if (!isLoggedIn || !user?.userId) return;
 
-//   const fetchAllChats = async () => {
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:4000/chat/get-all-chats?userId=${mentorId}`
-//       );
+    const fetchAllChats = async () => {
+      try {
+        const response = await axios.get(`${BaseURL}/chat/get-all-chats/${user.userId}`);
+        if (response.data.success) {
+          setChats(response.data.chats || []);
+          if (response.data.chats && response.data.chats.length > 0) {
+            setActiveChat(response.data.chats[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    };
 
-//       if (response.data.success) {
-//         console.log("All chats:", response.data.chats);
-//         setChats(response.data.chats);
-//       }
-//     } catch (error) {
-//       console.error("Error fetching chats:", error);
-//     }
-//   };
+    fetchAllChats();
+  }, [isLoggedIn, user]);
 
-//   const fetchChatHistory = async () => {
-//     try {
-//       const response = await axios.post(
-//         "http://localhost:4000/chat/get-or-create-chat",
-//         { menteeId, mentorId }
-//       );
-//       if (response.data.success) {
-//         setChatId(response.data.chatId);
-//         setMessages(response.data.messages || []);
-//       }
-//     } catch (error) {
-//       console.error("Error fetching chat history:", error);
-//     }
-//   };
+  useEffect(() => {
+    if (!activeChat) return;
 
-//   // Ensure socket joins the chat room after chatId is set
-//   useEffect(() => {
-//     if (chatId) {
-//       console.log(`Joining chat room: ${chatId}`);
-//       socket.emit("join_chat", { chatId });
-//     }
-//   }, [chatId]);
+    setChatId(activeChat._id);
+    setMessages(activeChat.history || []);
 
-//   // Listen for incoming messages
-//   useEffect(() => {
-//     if (!chatId) return;
-//     const handleMessageReceive = (data) => {
-//       console.log("Received message:", data);
-//       setMessages((prevMessages) => [...prevMessages, data]); // ✅ Update messages correctly
-//     };
+    if (socketRef.current) {
+      socketRef.current.emit("join_chat", { chatId: activeChat._id });
+    }
+  }, [activeChat]);
 
-//     socket.on("receiveMessage", handleMessageReceive);
+  useEffect(() => {
+    if (!chatId || !socketRef.current) return;
 
-//     return () => {
-//       socket.off("receiveMessage", handleMessageReceive);
-//     };
-//   }, [chatId]);
+    const handleMessageReceive = (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
+    };
 
-//   const sendMessage = async () => {
-//     if (message.trim() === "" || !chatId || !userType) {
-//       console.error("Missing required fields in sendMessage:", {
-//         chatId,
-//         userType,
-//         message,
-//       });
-//       return;
-//     }
+    socketRef.current.on("receiveMessage", handleMessageReceive);
 
-//     let senderId, receiverId;
-//     if (userType === "mentor") {
-//       senderId = mentorId;
-//       receiverId = menteeId;
-//     } else {
-//       senderId = menteeId;
-//       receiverId = mentorId;
-//     }
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("receiveMessage", handleMessageReceive);
+      }
+    };
+  }, [chatId]);
 
-//     const newMessage = {
-//       chatId,
-//       senderId,
-//       receiverId,
-//       role: userType,
-//       message,
-//     };
-//     socket.emit("sendMessage", newMessage);
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-//     try {
-//       const response = await axios.post(
-//         "http://localhost:4000/chat/send-message",
-//         newMessage
-//       );
-//       if (response.data.success) {
-//         // setMessages((prev) => [...prev, response.data.newMessage]);
-//       } else {
-//         console.error("Message sending failed:", response.data.error);
-//       }
-//     } catch (error) {
-//       console.error(
-//         "Error sending message:",
-//         error.response?.data || error.message
-//       );
-//     }
+  const sendMessage = async () => {
+    if (!message.trim() || !chatId || !user?.userType) return;
 
-//     setMessage("");
-//   };
+    const newMessage = {
+      chatId,
+      senderId: user.userId,
+      role: user.userType,
+      message,
+    };
 
-//   const chatBoxRef = useRef(null); // Add this ref
-//   // Scroll to the bottom whenever messages update
-//   useEffect(() => {
-//     if (chatBoxRef.current) {
-//       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-//     }
-//   }, [messages]); // Runs every time messages update
+    if (socketRef.current) {
+      socketRef.current.emit("sendMessage", newMessage);
+    }
 
-//   return (
-//     <div className="chat-container">
-//       <div className="chat-box" ref={chatBoxRef}>
-//         {messages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`message ${
-//               msg.senderId === userId ? "sent" : "received"
-//             }`}
-//           >
-//             <p>{msg.message}</p>
-//           </div>
-//         ))}
-//       </div>
-//       <div className="input-box">
-//         <input
-//           type="text"
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           placeholder="Type a message..."
-//         />
+    try {
+      await axios.post(`${BaseURL}/chat/send-message`, newMessage);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
 
-//         <button onClick={sendMessage}>Send</button>r
+    setMessage("");
+  };
 
-//       </div>
-//     </div>
-//   );
-// };
+  if (!isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <p className="text-xl font-semibold text-gray-700">Please log in to access messages.</p>
+      </div>
+    );
+  }
 
-// export default ChatPage;
+  return (
+    <div className="flex h-[85vh] bg-gray-100 m-4 rounded-lg shadow-lg overflow-hidden">
+      {/* Sidebar - Chat list */}
+      <div className="w-1/3 bg-white border-r overflow-y-auto">
+        <div className="p-4 border-b bg-gray-50">
+          <h2 className="text-xl font-bold text-gray-800">Your Conversations</h2>
+        </div>
+        {chats.length === 0 ? (
+          <p className="p-4 text-gray-500 text-center">No active chats found.</p>
+        ) : (
+          chats.map((chat) => (
+            <div
+              key={chat._id}
+              onClick={() => setActiveChat(chat)}
+              className={`p-4 border-b cursor-pointer transition hover:bg-gray-50 ${
+                activeChat?._id === chat._id ? "bg-blue-50" : ""
+              }`}
+            >
+              <h4 className="font-semibold text-gray-800">
+                Chat #{chat._id.substring(chat._id.length - 6)}
+              </h4>
+              <p className="text-sm text-gray-500 truncate">
+                {chat.lastMessage || "No messages yet"}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Main Chat Window */}
+      <div className="w-2/3 flex flex-col bg-white">
+        {activeChat ? (
+          <>
+            <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
+              <h3 className="font-bold text-gray-800">
+                Chat Conversation #{activeChat._id.substring(activeChat._id.length - 6)}
+              </h3>
+            </div>
+
+            <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50" ref={chatBoxRef}>
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${
+                    msg.userType === user.userType ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-xs md:max-w-md p-3 rounded-lg text-sm shadow ${
+                      msg.userType === user.userType
+                        ? "bg-blue-600 text-white rounded-br-none"
+                        : "bg-white text-gray-800 border rounded-bl-none"
+                    }`}
+                  >
+                    <p>{msg.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 border-t flex items-center space-x-2 bg-white">
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                placeholder="Type a message..."
+                className="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={sendMessage}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition"
+              >
+                Send
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-gray-500">
+            Select a conversation to start chatting.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ChatPage;

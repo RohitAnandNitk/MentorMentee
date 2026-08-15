@@ -24,7 +24,7 @@ const AllMentor = () => {
         }
 
         console.log("All Mentors:", response.data.mentors);
-        setAllMentors(response.data.mentors);
+        setAllMentors(response.data.mentors || []);
       } catch (error) {
         console.error("Error fetching all mentors:", error);
       }
@@ -37,6 +37,18 @@ const AllMentor = () => {
     value: item.label,
     label: item.label,
   }));
+
+  const filteredMentors = allMentors.filter((mentor) => {
+    const matchesSearch =
+      !searchQuery ||
+      mentor.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      mentor.bio?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesExpertise =
+      !selectedExpertise ||
+      (Array.isArray(mentor.expertise) &&
+        mentor.expertise.includes(selectedExpertise.value));
+    return matchesSearch && matchesExpertise;
+  });
 
   return (
     <>
@@ -61,45 +73,45 @@ const AllMentor = () => {
             <Select
               options={expertiseOptions}
               isSearchable
+              isClearable
               placeholder="Filter by Expertise"
               className="w-full md:w-1/4"
               onChange={setSelectedExpertise}
             />
-            <select className="w-full md:w-1/4 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
-              <option value="">Filter by Availability</option>
-              <option value="full-time">Full-Time</option>
-              <option value="part-time">Part-Time</option>
-              <option value="weekends">Weekends</option>
-            </select>
-            <button className="bg-slate-600 text-white px-6 py-2 rounded">
-              Search
-            </button>
           </div>
         </div>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 m-4">
-        {allMentors.map((mentor) => (
-          <div
-            key={mentor._id}
-            className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
-            onClick={() => navigate(`/profile/${mentor._id}`)}
-          >
-            <img
-              src={
-                mentor.profilePicture[0].url ||
-                "https://via.placeholder.com/150"
-              }
-              alt={mentor.name}
-              className="w-24 h-24 rounded-full mx-auto mb-4"
-            />
-            <h3 className="text-xl font-bold text-gray-800 text-center">
-              {mentor.name}
-            </h3>
-            <p className="text-gray-600 text-center">{mentor.expertise}</p>
-            <p className="text-gray-500 text-sm text-center">"{mentor.bio}"</p>
-          </div>
-        ))}
+        {filteredMentors.length === 0 ? (
+          <p className="col-span-3 text-center text-gray-500">No mentors found.</p>
+        ) : (
+          filteredMentors.map((mentor) => (
+            <div
+              key={mentor._id}
+              className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition"
+              onClick={() => navigate(`/profile/${mentor._id}`)}
+            >
+              <img
+                src={
+                  mentor.profilePicture?.[0]?.url ||
+                  "https://via.placeholder.com/150"
+                }
+                alt={mentor.name || "Mentor"}
+                className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+              />
+              <h3 className="text-xl font-bold text-gray-800 text-center">
+                {mentor.name}
+              </h3>
+              <p className="text-blue-600 text-center font-medium text-sm mt-1">
+                {Array.isArray(mentor.expertise)
+                  ? mentor.expertise.join(", ")
+                  : mentor.expertise}
+              </p>
+              <p className="text-gray-500 text-sm text-center mt-2">"{mentor.bio}"</p>
+            </div>
+          ))
+        )}
       </div>
     </>
   );

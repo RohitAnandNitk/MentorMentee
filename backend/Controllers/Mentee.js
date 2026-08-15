@@ -8,39 +8,50 @@ import cloudinary from "cloudinary";
 dotenv.config();
 
 export const MenteeSignup = async (req, res) => {
+  console.log("Call for mentee signup at backend");
   try {
     const { name, email, password, bio, availability } = req.body;
-    let fieldOfInterest = req.body.skills;
+    let fieldOfInterest = req.body.fieldOfInterest || req.body.skills;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email, and password are required",
+      });
+    }
+
+    // Check duplicate user
+    const existingMentee = await Mentee.findOne({ email: email.toLowerCase() });
+    if (existingMentee) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is already registered as a mentee",
+      });
+    }
 
     // Ensure skills is an array (if sent as a string)
     if (typeof fieldOfInterest === "string") {
-      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim());
+      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim()).filter(Boolean);
     }
 
-    // validation of file
-    if (!req.file) {
-      return res.status(500).json({
-        success: false,
-        message: "please upload the product image",
-      });
-    }
-    //handle mentor image
-    console.log("hiiiii");
-    const file = getDataUri(req.file);
-    const cdb = await cloudinary.v2.uploader.upload(file.content);
-    const pic = {
-      public_id: cdb.public_id,
-      url: cdb.secure_url,
+    let pic = {
+      public_id: "",
+      url: "https://via.placeholder.com/150",
     };
 
-    console.log("Received Data:", {
-      name,
-      email,
-      password,
-      bio,
-      fieldOfInterest,
-      availability,
-    });
+    // handle image upload if provided
+    if (req.file) {
+      try {
+        const file = getDataUri(req.file);
+        const cdb = await cloudinary.v2.uploader.upload(file.content);
+        pic = {
+          public_id: cdb.public_id,
+          url: cdb.secure_url,
+        };
+      } catch (uploadErr) {
+        console.error("Cloudinary upload failed, using fallback picture:", uploadErr.message);
+      }
+    }
 
     // Create new user
     const newUser = new Mentee({
@@ -48,24 +59,24 @@ export const MenteeSignup = async (req, res) => {
       email,
       password,
       bio,
-      availability,
-      fieldOfInterest,
+      availability: availability || "Available",
+      fieldOfInterest: fieldOfInterest || [],
       profilePicture: [pic],
     });
     const response = await newUser.save();
-    console.log("Data saved to DB");
+    console.log("Mentee data saved successfully");
 
-    // // Generate token
-    // const payload = { userId: response.id };
-    // const token = generateToken(payload);
-    // console.log("Token:", token);
-
-    res
-      .status(200)
-      .json({ success: true, message: "Register successfully", response });
+    res.status(200).json({
+      success: true,
+      message: "Register successfully",
+      response,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error in MenteeSignup:", err);
+    res.status(400).json({
+      success: false,
+      message: err.message || "Error during mentee signup",
+    });
   }
 };
 
@@ -147,15 +158,12 @@ export const updateProfile = async (req, res) => {
     }
 
     const { name, email, bio, availability } = req.body;
-    let fieldOfInterest = req.body.skills;
+    let fieldOfInterest = req.body.fieldOfInterest || req.body.skills || [];
 
-    // Ensure skills is an array (if sent as a string)
+    // Ensure fieldOfInterest is an array (if sent as a string)
     if (typeof fieldOfInterest === "string") {
-      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim());
+      fieldOfInterest = fieldOfInterest.split(",").map((skill) => skill.trim()).filter(Boolean);
     }
-
-    // ✅ Extract profile picture from `req.file`
-    const image = req.file ? req.file.buffer.toString("base64") : null;
 
     // Corrected: Await the database query
     const data = await Mentee.findById(userId);
@@ -168,12 +176,11 @@ export const updateProfile = async (req, res) => {
     }
 
     //update info
-    data.name = name;
-    data.email = email;
-    data.bio = bio;
-    data.availability = availability;
-    data.fieldOfInterest = fieldOfInterest;
-    data.image = image;
+    if (name) data.name = name;
+    if (email) data.email = email;
+    if (bio !== undefined) data.bio = bio;
+    if (availability) data.availability = availability;
+    if (fieldOfInterest && fieldOfInterest.length > 0) data.fieldOfInterest = fieldOfInterest;
 
     // console.log("Data:", data);
     await data.save();

@@ -81,7 +81,7 @@ export const sendMessage = async (req, res) => {
       return res.status(404).json({ error: "Chat not found" });
     }
 
-    const receiverId = role === "mentor" ? chat.mentorId : chat.menteeId;
+    const receiverId = role === "mentor" ? chat.menteeId : chat.mentorId;
     // Add message to chat history
     const newMessage = {
       userType: role === "mentor" ? "mentor" : "mentee",

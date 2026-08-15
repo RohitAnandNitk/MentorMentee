@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import config from "../config.js";
+
+const BaseURL = config.BASE_URL;
 
 function useChatbase() {
   const location = useLocation();
@@ -9,7 +12,7 @@ function useChatbase() {
 
     // Only load the script on the desired page (e.g., "/chat")
     if (location.pathname === "/" && !document.getElementById(scriptId)) {
-      fetch("http://localhost:5000/api/chatbase-key")
+      fetch(`${BaseURL}/api/chatbase-key`)
         .then((res) => res.json())
         .then((data) => {
           if (data.key) {

@@ -82,10 +82,13 @@ const ChatBox = ({ personName, mentorId, menteeId, onClose }) => {
     if (!message.trim() || !chatId || !user?.userType) return;
 
     console.log("Sending message:", message);
+    const senderId = user?.userId || (user?.userType === "mentor" ? mentorId : menteeId);
+    const receiverId = user?.userType === "mentor" ? menteeId : mentorId;
+
     const newMessage = {
       chatId,
-      senderId: menteeId,
-      receiverId: mentorId,
+      senderId,
+      receiverId,
       role: user.userType,
       message,
     };
@@ -105,7 +108,15 @@ const ChatBox = ({ personName, mentorId, menteeId, onClose }) => {
 
     setMessage("");
   };
+
   const chatBoxRef = useRef(null);
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <>
       <Backdrop
@@ -141,26 +152,18 @@ const ChatBox = ({ personName, mentorId, menteeId, onClose }) => {
           </IconButton>
         </CardContent>
 
-        {/* <CardContent
-          sx={{
-            flexGrow: 1,
-            overflowY: "auto",
-            borderTop: "1px solid #ddd",
-            borderBottom: "1px solid #ddd",
-          }}
-        > */}
         <div
           className="flex-1 overflow-y-auto p-4 bg-gray-100 rounded shadow-md"
           style={{ maxHeight: "70vh" }}
           ref={chatBoxRef}
         >
-          {messages.map((msg) => (
+          {messages.map((msg, index) => (
             <div
-              key={msg.id}
+              key={index}
               className={`mb-2 p-3 rounded-lg max-w-xs ${
-                msg.userType === "mentor"
-                  ? "bg-blue-300 text-black mr-auto" // Mentor messages on left
-                  : "bg-green-500 text-white ml-auto" // Mentee messages on right
+                msg.userType === user?.userType
+                  ? "bg-green-500 text-white ml-auto"
+                  : "bg-blue-300 text-black mr-auto"
               }`}
             >
               <p>{msg.message}</p>

@@ -40,10 +40,8 @@ const MentorProfile = () => {
     };
 
     const checkConnection = async () => {
+      if (!user?.userId || !userId) return;
       try {
-        console.log("menteeId : ", user.userId);
-        console.log("mentorId : ", userId);
-
         const response = await axios.get(
           `${BaseURL}/request/check-connection`,
           {
@@ -53,7 +51,6 @@ const MentorProfile = () => {
             },
           }
         );
-        console.log("got user connection stauts : ", response.data);
         setRequestStatus(response.data.status);
         setRequestId(response.data.requestId);
       } catch (error) {
@@ -63,7 +60,7 @@ const MentorProfile = () => {
 
     fetchUserData();
     checkConnection();
-  }, [userId, user]);
+  }, [userId, user?.userId]);
 
   const sendRequest = async () => {
     try {
@@ -99,7 +96,7 @@ const MentorProfile = () => {
     email: userData?.email,
     bio: userData?.bio,
     skills: userData?.expertise ?? [],
-    image: userData?.profilePicture[0]?.url,
+    image: userData?.profilePicture?.[0]?.url || "https://via.placeholder.com/150",
     rating: userData?.ratings,
   };
 

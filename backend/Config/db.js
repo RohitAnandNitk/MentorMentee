@@ -1,18 +1,14 @@
 import mongoose from "mongoose";
 
 // configure the dotenv file
-import dotnev from "dotenv";
-dotnev.config({ path: "./config/.env" });
+import dotenv from "dotenv";
+dotenv.config({ path: "./Config/.env" });
 
 //const mongoURL = process.env.MONGODB_URL_LOCAL;
 const mongoURL = process.env.MONGODB_URL;
 
 //setup mongodb connection
-mongoose.connect(mongoURL, {
-  // required parammeters
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(mongoURL);
 
 // Get the default connection
 // Mongooes maintain a default connection object repersenting the MongoDB connection

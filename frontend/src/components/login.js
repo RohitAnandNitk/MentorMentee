@@ -33,7 +33,11 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Something went wrong. Please try again.");
+      setError(
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Invalid Email or Password."
+      );
     }
   };
 
