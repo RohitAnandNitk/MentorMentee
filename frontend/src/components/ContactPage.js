@@ -124,18 +124,13 @@ const ContactPage = () => {
           Contact Details
         </h2>
         <p className="text-lg text-gray-600 mb-2">
-          Email: support@mentorconnect.com
+          Email: thepekatlau1@gmail.com
         </p>
-        <p className="text-lg text-gray-600 mb-2">Phone: +1 123 456 7890</p>
+        <p className="text-lg text-gray-600 mb-2">Phone: 7005736796</p>
         <p className="text-lg text-gray-600">
-          Address: 123 Mentor Street, Tech City, USA
+          Address: Ramhlun North, Aizawl, Mizoram
         </p>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12 text-center">
-        <p>&copy; 2025 MentorConnect. All rights reserved.</p>
-      </footer>
     </div>
   );
 };
