@@ -69,19 +69,19 @@ const LandingPage = () => {
                 <p className="text-gray-600 mb-4">
                   "My mentor helped me land my dream job!"
                 </p>
-                <h3 className="font-bold text-gray-800">- Alex D.</h3>
+                <h3 className="font-bold text-gray-800">- Aadarsh</h3>
               </div>
               <div className="bg-gray-50 p-6 rounded-lg shadow">
                 <p className="text-gray-600 mb-4">
                   "Amazing experience with great guidance."
                 </p>
-                <h3 className="font-bold text-gray-800">- Sarah K.</h3>
+                <h3 className="font-bold text-gray-800">- Piyush Patel</h3>
               </div>
               <div className="bg-gray-50 p-6 rounded-lg shadow">
                 <p className="text-gray-600 mb-4">
                   "Helped me grow professionally and personally."
                 </p>
-                <h3 className="font-bold text-gray-800">- Michael T.</h3>
+                <h3 className="font-bold text-gray-800">- Aman</h3>
               </div>
             </div>
           </div>
