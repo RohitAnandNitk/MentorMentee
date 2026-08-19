@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Menu,
   X,
@@ -67,14 +67,15 @@ const MenteeDash = () => {
   }, [user?.userType, user?.userId]);
 
   const chatBoxRef = useRef(null);
-  // Fetch chat history when a mentee is selected
-  useEffect(() => {
-    if (selectedUserId && user.userId) {
-      fetchChatHistory();
-    }
-  }, [selectedUserId, user.userId]);
 
-  const fetchChatHistory = async () => {
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  // Fetch chat history when a mentee is selected
+  const fetchChatHistory = useCallback(async () => {
     console.log();
     try {
       const response = await axios.post(`${BaseURL}/chat/get-or-create-chat`, {
@@ -88,7 +89,13 @@ const MenteeDash = () => {
     } catch (error) {
       console.error("Error fetching chat history:", error);
     }
-  };
+  }, [selectedUserId, user.userId]);
+
+  useEffect(() => {
+    if (selectedUserId && user.userId) {
+      fetchChatHistory();
+    }
+  }, [selectedUserId, user.userId, fetchChatHistory]);
 
   // Join chat room via Socket.IO
   useEffect(() => {
@@ -110,7 +117,7 @@ const MenteeDash = () => {
     return () => {
       socket.off("receiveMessage", handleMessageReceive);
     };
-  }, [chatId, socket]); // Add `socket` as a dependency
+  }, [chatId]);
 
   // Send a message
   const sendMessage = async () => {

@@ -54,10 +54,6 @@ const ResponsiveAppBar = () => {
     }
   };
 
-  const handleProfile = () => {
-    setAnchorElUser(null);
-    navigate(`/${user.userType}-profile`);
-  };
 
   const handleClose = () => {
     setAnchorElUser(null);

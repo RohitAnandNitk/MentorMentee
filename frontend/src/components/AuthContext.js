@@ -14,6 +14,16 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({ userId: null, userType: null });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isLoggedIn");
+
+    startTransition(() => {
+      setUser(null);
+      setIsLoggedIn(false);
+    });
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -32,33 +42,26 @@ export const AuthProvider = ({ children }) => {
         setTimeout(() => logout(), 0); // Defer logout to avoid concurrent update issues
       }
     }
-  }, []);
+  }, [logout]);
 
-  const login = useCallback((token) => {
-    try {
-      const decodedToken = jwtDecode(token);
-      setUser({
-        userId: decodedToken.userId,
-        userType: decodedToken.role,
-      });
-      setIsLoggedIn(true);
-      localStorage.setItem("token", token);
-      localStorage.setItem("isLoggedIn", "true"); // Ensure sync
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      logout();
-    }
-  }, []);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isLoggedIn");
-
-    startTransition(() => {
-      setUser(null);
-      setIsLoggedIn(false);
-    });
-  }, []);
+  const login = useCallback(
+    (token) => {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUser({
+          userId: decodedToken.userId,
+          userType: decodedToken.role,
+        });
+        setIsLoggedIn(true);
+        localStorage.setItem("token", token);
+        localStorage.setItem("isLoggedIn", "true"); // Ensure sync
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        logout();
+      }
+    },
+    [logout]
+  );
 
   return (
     <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>

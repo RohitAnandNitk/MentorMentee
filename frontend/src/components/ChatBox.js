@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -34,13 +34,7 @@ const ChatBox = ({ personName, mentorId, menteeId, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    console.log("MentorId:", mentorId);
-    console.log("MenteeId:", menteeId);
-    fetchChatHistory();
-  }, [personName, mentorId, menteeId]);
-
-  const fetchChatHistory = async () => {
+  const fetchChatHistory = useCallback(async () => {
     console.log("Fetching chat history...");
     try {
       const response = await axios.post(`${BaseURL}/chat/get-or-create-chat`, {
@@ -55,7 +49,13 @@ const ChatBox = ({ personName, mentorId, menteeId, onClose }) => {
     } catch (error) {
       console.error("Error fetching chat history:", error);
     }
-  };
+  }, [menteeId, mentorId]);
+
+  useEffect(() => {
+    console.log("MentorId:", mentorId);
+    console.log("MenteeId:", menteeId);
+    fetchChatHistory();
+  }, [personName, mentorId, menteeId, fetchChatHistory]);
 
   useEffect(() => {
     if (chatId) {

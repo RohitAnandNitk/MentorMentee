@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@mui/material";
 import { Button, Autocomplete, TextField, IconButton } from "@mui/material";
 import MentorGrpChat from "./mentorGrpChat";
@@ -15,7 +15,6 @@ export default function MentorGroups() {
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const chatBoxRef = useRef(null);
 
   const allMentees = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Hank"];
 

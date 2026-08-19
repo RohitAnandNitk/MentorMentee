@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import config from "../config.js";
 import { useAuth } from "./AuthContext";
@@ -8,7 +8,8 @@ const MentorRequests = () => {
   const { user } = useAuth();
   const [pendingRequests, setPendingRequests] = useState([]);
 
-  const getPendingRequest = async () => {
+  const getPendingRequest = useCallback(async () => {
+    if (!user?.userId || !user?.userType) return;
     const response = await axios.get(`${BaseURL}/request/pending-request`, {
       params: {
         userId: user.userId,
@@ -17,10 +18,11 @@ const MentorRequests = () => {
     });
     console.log("these are the pending requests :", response);
     setPendingRequests(response?.data?.requests || []);
-  };
+  }, [user?.userId, user?.userType]);
+
   useEffect(() => {
     getPendingRequest();
-  }, [user]);
+  }, [getPendingRequest]);
 
   const handleAccept = async (requestId, menteeIdParam) => {
     const menteeId = typeof menteeIdParam === "object" ? menteeIdParam._id : menteeIdParam;

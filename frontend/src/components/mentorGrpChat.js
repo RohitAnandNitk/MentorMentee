@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Phone, Video, Edit, UserPlus, UserMinus, Trash2 } from "lucide-react";
 import IconButton from "@mui/material/IconButton";
 
@@ -8,6 +8,12 @@ export default function MentorGrpChat({ selectedGroup, setSelectedGroup, message
   const [newGroupName, setNewGroupName] = useState(selectedGroup.name);
   const [showMembers, setShowMembers] = useState(false);
   const chatBoxRef = useRef(null);
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <div className="p-6  mx-auto space-y-6 h-screen flex flex-col">

@@ -9,7 +9,6 @@ import {
   Button,
   Box,
   Container,
-  Grid,
 } from "@mui/material";
 import { Rate } from "antd";
 import { MessageCircle, CalendarCheck, UserPlus } from "lucide-react";
@@ -100,9 +99,7 @@ const MentorProfile = () => {
     rating: userData?.ratings,
   };
 
-  const handleChatBox = () => {
-    console.log("Opening the chatBox with mentorId : ", userId);
-  };
+
 
   return (
     <Box
